@@ -1,0 +1,5 @@
+name: NPC
+version: '${project.version}'
+main: xyz.oreodev.npc.NPC
+commands:
+  npc:
