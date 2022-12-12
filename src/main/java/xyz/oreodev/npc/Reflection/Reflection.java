@@ -7,5 +7,4 @@ public class Reflection {
     public Class<?> craftEntity = null;
 
     public Class<?> entityPlayer = null;
-
 }

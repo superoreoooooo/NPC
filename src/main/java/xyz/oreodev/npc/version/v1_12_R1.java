@@ -12,7 +12,7 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
 import xyz.oreodev.npc.NPCPlayer;
-import xyz.oreodev.npc.NPC;
+import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.paper.PaperUtils_v1_12_R1;
 
 import java.lang.reflect.Field;
@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class v1_12_R1 {
-    public static EntityPlayer spawn(NPCPlayer NPCPlayer) {
+    public static EntityPlayer spawn(NPCPlayer NPCPlayer, double x, double y, double z, float yaw, float pitch) {
         WorldServer worldServer = ((CraftWorld) Bukkit.getWorlds().get(0)).getHandle();
         MinecraftServer mcServer = ((CraftServer) Bukkit.getServer()).getServer();
         EntityPlayer entityPlayer = createEntityPlayer(NPCPlayer.getUUID(), NPCPlayer.getName(), worldServer);
@@ -41,15 +41,16 @@ public class v1_12_R1 {
 
         mcServer.getPlayerList().a(entityPlayer);
         Location loc = bukkitPlayer.getLocation();
+        entityPlayer.setPosition(x,y,z);
 
-        entityPlayer.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        entityPlayer.setPositionRotation(x, y, z, yaw/360 * 256, pitch);
 
         DataWatcher data = entityPlayer.getDataWatcher();
         data.set(DataWatcherRegistry.a.a(13), (byte)127);
 
         String joinMessage = getJoinMessage(entityPlayer);
 
-        if (xyz.oreodev.npc.NPC.getPlugin().usesPaper()) {
+        if (Main.getPlugin().usesPaper()) {
             PaperUtils_v1_12_R1.playerInitialSpawnEvent(bukkitPlayer);
         }
 
@@ -97,8 +98,8 @@ public class v1_12_R1 {
         PlayerResourcePackStatusEvent resourcePackStatusEventAccepted = new PlayerResourcePackStatusEvent(bukkitPlayer, PlayerResourcePackStatusEvent.Status.ACCEPTED);
         PlayerResourcePackStatusEvent resourcePackStatusEventSuccessFullyLoaded = new PlayerResourcePackStatusEvent(bukkitPlayer, PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED);
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(NPC.getPlugin(), () -> Bukkit.getPluginManager().callEvent(resourcePackStatusEventAccepted), 20);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(NPC.getPlugin(), () -> Bukkit.getPluginManager().callEvent(resourcePackStatusEventSuccessFullyLoaded), 40);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> Bukkit.getPluginManager().callEvent(resourcePackStatusEventAccepted), 20);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> Bukkit.getPluginManager().callEvent(resourcePackStatusEventSuccessFullyLoaded), 40);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
@@ -108,7 +109,9 @@ public class v1_12_R1 {
 
         worldServer.addEntity(entityPlayer);
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(NPC.getPlugin(), entityPlayer::playerTick, 1, 1);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), entityPlayer::playerTick, 1, 1);
+
+        Main.npcs.add(entityPlayer);
 
         return entityPlayer;
     }
@@ -134,8 +137,11 @@ public class v1_12_R1 {
 
         Bukkit.getPluginManager().callEvent(playerQuitEvent);
 
+        Main.npcs.remove(entityPlayer);
+
         worldServer.getPlayerChunkMap().removePlayer(entityPlayer);
         worldServer.removeEntity(entityPlayer);
+
 
         if (mcServer.isMainThread()) {
             entityPlayer.playerTick();

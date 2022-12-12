@@ -3,8 +3,6 @@ bstats: true
 
 tick-delay-between-joins: 4
 
-prefix: "&2&lFake Players&7 »&r"
-
 bungeecord:
   enabled: false
   ip: "127.0.0.1"

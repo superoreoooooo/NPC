@@ -1,5 +1,6 @@
 package xyz.oreodev.npc;
 
+import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -9,6 +10,8 @@ import xyz.oreodev.npc.command.NPCPlayers;
 import xyz.oreodev.npc.command.NPCPlayersCompleter;
 import xyz.oreodev.npc.listener.DeathListener;
 import xyz.oreodev.npc.listener.PreLoginListener;
+import xyz.oreodev.npc.listener.playerMovementListener;
+import xyz.oreodev.npc.manager.npcYmlManager;
 import xyz.oreodev.npc.util.Color;
 import xyz.oreodev.npc.version.Version;
 
@@ -18,50 +21,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public final class NPC extends JavaPlugin {
-    private static NPC plugin;
-
+public final class Main extends JavaPlugin {
+    private static Main plugin;
     public FileConfiguration config;
+    public npcYmlManager ymlManager;
 
     private boolean usesCraftBukkit = false;
     private boolean usesPaper = false;
     private boolean updatedPaper = false;
 
+    public static List<EntityPlayer> npcs = new ArrayList<>();
+
     private Version version = Version.valueOf(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]);
 
-    public static NPC getPlugin() {
+    public static Main getPlugin() {
         return plugin;
     }
 
-    public static String getConfigMessage(FileConfiguration config, String path, String[] args) {
+    public static String getConfigMessage(FileConfiguration config, String path) {
         String text = config.getString(path);
-
-        boolean open = false;
-        StringBuilder chars = new StringBuilder();
-        for (char c : text.toCharArray()) {
-            if (c == '%') {
-                if (open) {
-                    final char[] CHARACTERS = chars.toString().toCharArray();
-                    if (CHARACTERS[0] == 'a' && CHARACTERS[1] == 'r' && CHARACTERS[2] == 'g') {
-                        final int ARG = Integer.parseInt(String.valueOf(CHARACTERS[3]));
-
-                        text = text.replace(chars.toString(), args[ARG]);
-
-                        chars = new StringBuilder();
-                    }
-                    open = false;
-                } else {
-                    open = true;
-                }
-                continue;
-            }
-
-            if (open) {
-                chars.append(c);
-            }
-        }
-
-        return Color.format(config.getString("prefix") + " " + text.replace("%", ""));
+        return Color.format(text);
     }
 
     public boolean usesPaper() {
@@ -110,6 +89,7 @@ public final class NPC extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new DeathListener(), this);
         getServer().getPluginManager().registerEvents(new PreLoginListener(), this);
+        getServer().getPluginManager().registerEvents(new playerMovementListener(), this);
 
         plugin = this;
 
@@ -117,6 +97,7 @@ public final class NPC extends JavaPlugin {
 
         this.saveDefaultConfig();
         config = this.getConfig();
+        this.ymlManager = new npcYmlManager(this);
 
         validateConfig();
     }

@@ -3,6 +3,7 @@ package xyz.oreodev.npc;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.action.Action;
 import xyz.oreodev.npc.action.ActionWait;
 import xyz.oreodev.npc.version.v1_12_R1;
@@ -18,6 +19,7 @@ public class NPCPlayer {
     private UUID uuid;
     private String name;
     private Object entityPlayer;
+    private Main plugin;
 
     public NPCPlayer(UUID uuid, String name) {
         this.uuid = uuid;
@@ -51,11 +53,14 @@ public class NPCPlayer {
     }
 
     public static boolean summon(String name) {
-        return new NPCPlayer(NPC.getRandomUUID(name), name).spawn();
+        return new NPCPlayer(Main.getRandomUUID(name), name).spawn();
     }
 
-    public boolean spawn() {
-        List<HandlerList> copy = new ArrayList<>(HandlerList.getHandlerLists());
+    public static boolean summon(String name, double x, double y, double z, float yaw, float pitch) {
+        return new NPCPlayer(Main.getRandomUUID(name), name).spawn(x, y, z, yaw, pitch);
+    }
+
+    public boolean spawn(double x, double y, double z, float yaw, float pitch) {
         if (name.length() >= 16) {
             return false;
         }
@@ -66,7 +71,24 @@ public class NPCPlayer {
             }
         }
 
-        entityPlayer = v1_12_R1.spawn(this);
+        entityPlayer = v1_12_R1.spawn(this, x, y, z, yaw, pitch);
+        npcPlayers.add(this);
+
+        return true;
+    }
+
+    public boolean spawn() {
+        if (name.length() >= 16) {
+            return false;
+        }
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.getName().equalsIgnoreCase(name)) {
+                return false;
+            }
+        }
+
+        entityPlayer = v1_12_R1.spawn(this, 0, 0, 0, 0, 0);
         npcPlayers.add(this);
 
         return true;
@@ -96,7 +118,7 @@ public class NPCPlayer {
         for (int i = 0; i < number; i++) {
             for (Action action : actions) {
                 if (!(action instanceof ActionWait)) {
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(NPC.getPlugin(), () -> action.perform(this), 0);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> action.perform(this), 0);
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e) {
@@ -112,5 +134,12 @@ public class NPCPlayer {
 
     public List<Action> getActions() {
         return actions;
+    }
+
+    public void saveNPCPlayer() {
+        plugin = JavaPlugin.getPlugin(Main.class);
+        for (NPCPlayer npcPlayer : npcPlayers) {
+            plugin.ymlManager.getConfig().set("npc." + npcPlayer.getUUID().toString() + ".name.", npcPlayer.getName());
+        }
     }
 }
