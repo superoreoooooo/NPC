@@ -6,7 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.oreodev.npc.command.NPCPlayers;
+import xyz.oreodev.npc.command.NPCPlayersCommand;
 import xyz.oreodev.npc.command.NPCPlayersCompleter;
 import xyz.oreodev.npc.listener.DeathListener;
 import xyz.oreodev.npc.listener.PreLoginListener;
@@ -29,6 +29,8 @@ public final class Main extends JavaPlugin {
     private boolean usesCraftBukkit = false;
     private boolean usesPaper = false;
     private boolean updatedPaper = false;
+
+    private NPCPlayer npcPlayer;
 
     public static List<EntityPlayer> npcs = new ArrayList<>();
 
@@ -84,7 +86,7 @@ public final class Main extends JavaPlugin {
 
         Bukkit.getLogger().info("Detected version : " + version.name());
 
-        getCommand("npc").setExecutor(new NPCPlayers());
+        getCommand("npc").setExecutor(new NPCPlayersCommand());
         getCommand("npc").setTabCompleter(new NPCPlayersCompleter());
 
         getServer().getPluginManager().registerEvents(new DeathListener(), this);
@@ -100,6 +102,7 @@ public final class Main extends JavaPlugin {
         this.ymlManager = new npcYmlManager(this);
 
         validateConfig();
+        initialize();
     }
 
     public boolean usesCraftBukkit() {
@@ -108,7 +111,9 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        List<NPCPlayer> copyList = new ArrayList<>(NPCPlayer.getNPCPlayers());
+        List<NPCPlayer> copyList = new ArrayList<>(NPCPlayer.getNPCPlayerList());
+        npcPlayer = new NPCPlayer();
+        npcPlayer.saveNPCPlayer();
         try {
             BufferedWriter myWriter = new BufferedWriter(new FileWriter("plugins/NPC/cache/cache$1.fpcache"));
             for (NPCPlayer player : copyList) {
@@ -119,6 +124,11 @@ public final class Main extends JavaPlugin {
         } catch (IOException e) {
             Bukkit.getLogger().warning("Failed to cache NPCs who are currently online. They will not rejoin your server.");
         }
+    }
+
+    public void initialize() {
+        npcPlayer = new NPCPlayer();
+        npcPlayer.loadNPCPlayers();
     }
 
     public void validateConfig() {

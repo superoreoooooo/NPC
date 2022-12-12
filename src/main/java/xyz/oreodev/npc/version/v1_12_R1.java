@@ -11,6 +11,7 @@ import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
+import org.bukkit.metadata.FixedMetadataValue;
 import xyz.oreodev.npc.NPCPlayer;
 import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.paper.PaperUtils_v1_12_R1;
@@ -24,7 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class v1_12_R1 {
-    public static EntityPlayer spawn(NPCPlayer NPCPlayer, double x, double y, double z, float yaw, float pitch) {
+    public static EntityPlayer spawn(NPCPlayer NPCPlayer, double x, double y, double z) {
         WorldServer worldServer = ((CraftWorld) Bukkit.getWorlds().get(0)).getHandle();
         MinecraftServer mcServer = ((CraftServer) Bukkit.getServer()).getServer();
         EntityPlayer entityPlayer = createEntityPlayer(NPCPlayer.getUUID(), NPCPlayer.getName(), worldServer);
@@ -43,7 +44,7 @@ public class v1_12_R1 {
         Location loc = bukkitPlayer.getLocation();
         entityPlayer.setPosition(x,y,z);
 
-        entityPlayer.setPositionRotation(x, y, z, yaw/360 * 256, pitch);
+        entityPlayer.setPositionRotation(x, y, z, loc.getYaw(), loc.getPitch());
 
         DataWatcher data = entityPlayer.getDataWatcher();
         data.set(DataWatcherRegistry.a.a(13), (byte)127);
@@ -109,6 +110,8 @@ public class v1_12_R1 {
 
         worldServer.addEntity(entityPlayer);
 
+        entityPlayer.getBukkitEntity().setMetadata("npc", new FixedMetadataValue(Main.getPlugin(), NPCPlayer.getName()));
+
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), entityPlayer::playerTick, 1, 1);
 
         Main.npcs.add(entityPlayer);
@@ -167,7 +170,7 @@ public class v1_12_R1 {
             e.printStackTrace();
         }
 
-        NPCPlayer.getNPCPlayers().remove(player);
+        NPCPlayer.getNPCPlayerList().remove(player);
         String finalQuitMessage = playerQuitEvent.getQuitMessage();
 
         if (finalQuitMessage != null && !finalQuitMessage.equals("")) {

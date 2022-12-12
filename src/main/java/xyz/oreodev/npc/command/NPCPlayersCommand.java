@@ -8,27 +8,38 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.NPCPlayer;
-import xyz.oreodev.npc.action.ActionWait;
 import xyz.oreodev.npc.util.Color;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NPCPlayers implements CommandExecutor {
+public class NPCPlayersCommand implements CommandExecutor {
+    private NPCPlayer npcPlayer;
+
+    public NPCPlayersCommand() {
+        this.npcPlayer = new NPCPlayer();
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender.hasPermission("administrators")) {
             if (args.length == 0) {
                 sender.sendMessage("");
-                sender.sendMessage(Color.format("&2> &3/npc spawn (Name) &b- summons a fake player"));
-                sender.sendMessage(Color.format("&2> &3/npc spawn (Name) (Number) &b- summons a certain amount of fake players"));
+                sender.sendMessage(Color.format("&2> &3/npc add (Name) &b- summons a fake player"));
+                sender.sendMessage(Color.format("&2> &3/npc add (Name) (Number) &b- summons a certain amount of fake players"));
                 sender.sendMessage(Color.format("&2> &3/npc remove (Name/All) &b- disbands fake players"));
                 sender.sendMessage(Color.format("&2> &3/npc list &b- displays a fake player list"));
                 sender.sendMessage(Color.format("&2> &3/npc reload &b- reloads config.yml"));
                 sender.sendMessage("");
             } else {
                 switch (args[0]) {
-                    case "spawn":
+                    case "save":
+                        npcPlayer.saveNPCPlayer();
+                        break;
+                    case "load":
+                        npcPlayer.loadNPCPlayers();
+                        break;
+                    case "add":
                         if (args.length == 2) {
                             summon(sender, args[1]);
                         } else if (args.length == 5) {
@@ -70,17 +81,17 @@ public class NPCPlayers implements CommandExecutor {
         return false;
     }
 
-    private void summon(CommandSender sender, String name, double x, double y, double z) {
-        if (NPCPlayer.summon(name, x, y, z, 0, 0, ((Player)sender).getLocation())) {
+    public void summon(CommandSender sender, String name, double x, double y, double z) {
+        if (NPCPlayer.summon(name, x, y, z, Main.getRandomUUID(name))) {
             sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.summon.success-one"));
         } else {
             sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.summon.failed"));
         }
     }
 
-    private void summon(CommandSender sender, String name) {
+    public void summon(CommandSender sender, String name) {
         Location loc = ((Player)sender).getLocation();
-        if (NPCPlayer.summon(name, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc)) {
+        if (NPCPlayer.summon(name, loc.getX(), loc.getY(), loc.getZ(), Main.getRandomUUID(name))) {
             sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.summon.success-one"));
         } else {
             sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.summon.failed"));
@@ -89,16 +100,16 @@ public class NPCPlayers implements CommandExecutor {
 
     private void disband(CommandSender sender, String name) {
         if (name.equalsIgnoreCase("All")) {
-            List<NPCPlayer> copy = new ArrayList<>(NPCPlayer.getNPCPlayers());
+            List<NPCPlayer> copy = new ArrayList<>(NPCPlayer.getNPCPlayerList());
             for (NPCPlayer player : copy) {
-                player.removePlayer();
+                player.removeDataAndPlayer();
             }
             sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.disband.all-disbanded-success"));
         } else {
             NPCPlayer npePlayer = NPCPlayer.getNPCPlayer(name);
 
             if (npePlayer != null) {
-                npePlayer.removePlayer();
+                npePlayer.removeDataAndPlayer();
                 sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.disband.one-disbanded-success"));
             } else {
                 sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.disband.failed"));
@@ -111,7 +122,7 @@ public class NPCPlayers implements CommandExecutor {
 
         StringBuilder list = new StringBuilder();
 
-        for (NPCPlayer player : NPCPlayer.getNPCPlayers()) {
+        for (NPCPlayer player : NPCPlayer.getNPCPlayerList()) {
             list.append(Color.format(player.getName() + ", "));
         }
 

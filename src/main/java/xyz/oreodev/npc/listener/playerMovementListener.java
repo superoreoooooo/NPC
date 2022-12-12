@@ -17,7 +17,7 @@ public class playerMovementListener implements Listener {
             Location playerLoc = e.getPlayer().getLocation();
             Location location = npc.getBukkitEntity().getLocation();
             double distance = playerLoc.distance(location);
-            if (distance >= 15) return;
+            if (distance >= 8) return;
             location.setDirection(e.getPlayer().getLocation().subtract(location).toVector());
             float yaw = location.getYaw();
             float pitch = location.getPitch();
