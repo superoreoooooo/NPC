@@ -9,7 +9,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
-import xyz.oreodev.npc.command.shop.shopCommand;
+import xyz.oreodev.npc.command.NPCComand;
 import xyz.oreodev.npc.util.shop.shopUtil;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class shopListener implements Listener {
 
     @EventHandler
     public void onOpen(InventoryOpenEvent e) {
-        if (shopCommand.editorList.contains((Player) e.getPlayer())) return;
+        if (NPCComand.editorList.contains((Player) e.getPlayer())) return;
         if (e.getInventory().getTitle().contains("_상점")) {
             e.getPlayer().sendMessage("opened shop : " + e.getInventory().getTitle().split("_")[0]);
         }
@@ -56,7 +56,7 @@ public class shopListener implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if (shopCommand.editorList.contains((Player)e.getWhoClicked())) return;
+        if (NPCComand.editorList.contains((Player)e.getWhoClicked())) return;
         if (e.getClickedInventory() == null) return;
         //currentItem :
         e.getWhoClicked().sendMessage(e.getClickedInventory().getName() + " // " + e.getClick().toString() + " // " + e.getCurrentItem().getType().toString() + " // " + e.getCursor().getType().toString() + " // " + e.getAction().toString());
@@ -68,7 +68,7 @@ public class shopListener implements Listener {
         if (e.getInventory().getTitle().contains("_상점")) {
             String[] storeName = e.getInventory().getTitle().split("_");
             e.getPlayer().sendMessage("closed shop : " + storeName[0]);
-            if (shopCommand.editorList.contains((Player)e.getPlayer())) {
+            if (NPCComand.editorList.contains((Player)e.getPlayer())) {
                 e.getPlayer().sendMessage("Saved items");
                 for (String str : shopUtil.shopMap.values()) {
                     if (str.equalsIgnoreCase(storeName[0])) {
@@ -86,6 +86,6 @@ public class shopListener implements Listener {
                 }
             }
         }
-        shopCommand.editorList.remove((Player)e.getPlayer());
+        NPCComand.editorList.remove((Player)e.getPlayer());
     }
 }

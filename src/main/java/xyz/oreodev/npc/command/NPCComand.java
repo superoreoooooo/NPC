@@ -1,4 +1,4 @@
-package xyz.oreodev.npc.command.NPC;
+package xyz.oreodev.npc.command;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -6,46 +6,62 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.NPCPlayer;
 import xyz.oreodev.npc.util.Color;
+import xyz.oreodev.npc.util.shop.shopUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NPCComand implements CommandExecutor {
     private NPCPlayer npcPlayer;
+    private shopUtil util;
+    private Main plugin;
+
+    public static List<Player> editorList = new ArrayList<>();
 
     public NPCComand() {
         this.npcPlayer = new NPCPlayer();
+        this.util = new shopUtil();
+        this.plugin = JavaPlugin.getPlugin(Main.class);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (!(sender instanceof Player)) return false;
         if (sender.hasPermission("administrators")) {
             if (args.length == 0) {
-                sender.sendMessage("/npc list | add (name) | remove (name) / (all) | reload");
+                sender.sendMessage("/npc list | open (name) | add (name) (size) | remove (name) / (all) | edit (name) | size (name)");
             } else {
                 switch (args[0]) {
                     case "save":
-                        npcPlayer.saveNPCPlayer();
-                        break;
-                    case "load":
-                        npcPlayer.loadNPCPlayers();
+                        plugin.saveNPC();
                         break;
                     case "add":
                         if (args.length == 2) {
                             summon(sender, args[1]);
-                        } else if (args.length == 5) {
-                            summon(sender, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+                            util.createShop((Player) sender, args[1], "9");
+                        } else if (args.length == 3) {
+                            summon(sender, args[1]);
+                            util.createShop((Player) sender, args[1], args[2]);
                         }
                         else {
+                            Bukkit.dispatchCommand(sender, "npc");
+                        }
+                        break;
+                    case "size":
+                        if (args.length == 3) {
+                            util.saveInventorySize(util.getIDFromName(args[1]), Integer.parseInt(args[2]));
+                        } else {
                             Bukkit.dispatchCommand(sender, "npc");
                         }
                         break;
                     case "remove":
                         if (args.length == 2) {
                             disband(sender, args[1]);
+                            util.removeShop((Player) sender, args[1]);
                         } else {
                             Bukkit.dispatchCommand(sender, "npc");
                         }
@@ -57,10 +73,15 @@ public class NPCComand implements CommandExecutor {
                             Bukkit.dispatchCommand(sender, "npc");
                         }
                         break;
-                    case "reload":
-                        Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
-                        Bukkit.getPluginManager().enablePlugin(Main.getPlugin());
-                        sender.sendMessage("reload complete");
+                    case "open":
+                        if (args.length == 2) {
+                            util.openShop((Player) sender, args[1]);
+                        }
+                        break;
+                    case "edit":
+                        if (args.length == 2) {
+                            util.editShop((Player) sender, args[1]);
+                        }
                         break;
                     default:
                         Bukkit.dispatchCommand(sender, "npc");
@@ -72,14 +93,6 @@ public class NPCComand implements CommandExecutor {
             sender.sendMessage("no permissions!");
         }
         return false;
-    }
-
-    public void summon(CommandSender sender, String name, double x, double y, double z) {
-        if (NPCPlayer.summon(name, x, y, z, Main.getRandomUUID(name))) {
-            sender.sendMessage("succeed to add new npc!");
-        } else {
-            sender.sendMessage("failed to add new npc!");
-        }
     }
 
     public void summon(CommandSender sender, String name) {

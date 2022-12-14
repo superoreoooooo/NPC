@@ -1,4 +1,4 @@
-package xyz.oreodev.npc.command.NPC;
+package xyz.oreodev.npc.command;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
