@@ -15,14 +15,14 @@ import xyz.oreodev.npc.util.shop.shopUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NPCComand implements CommandExecutor {
+public class NPCCommand implements CommandExecutor {
     private NPCPlayer npcPlayer;
     private shopUtil util;
     private Main plugin;
 
     public static List<Player> editorList = new ArrayList<>();
 
-    public NPCComand() {
+    public NPCCommand() {
         this.npcPlayer = new NPCPlayer();
         this.util = new shopUtil();
         this.plugin = JavaPlugin.getPlugin(Main.class);

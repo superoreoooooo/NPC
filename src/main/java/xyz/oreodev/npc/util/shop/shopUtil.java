@@ -1,17 +1,11 @@
 package xyz.oreodev.npc.util.shop;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
-import xyz.oreodev.npc.command.NPCComand;
+import xyz.oreodev.npc.command.NPCCommand;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -79,16 +73,17 @@ public class shopUtil {
             player.sendMessage("/shop edit (name)");
             return;
         }
+        NPCCommand.editorList.add(player);
         UUID key = getIDFromName(name);
         shopInventory shopInventory = new shopInventory(key, getSavedTitle(key), getSavedInventorySize(key));
         player.sendMessage("UUID  > " + key);
         player.sendMessage("Title > " + getSavedTitle(key));
         player.sendMessage("Size  > " + getSavedInventorySize(key));
         for (int i = 0; i < getSavedInventorySize(key); i++) {
+            if (getSavedItemStack(key, i) == null) continue;
             player.sendMessage("Item" + i + "  > " + getSavedItemStack(key, i));
         }
         player.openInventory(shopInventory.getInventory());
-        NPCComand.editorList.add(player);
     }
 
     public void removeShop(Player player, String name) {
@@ -123,6 +118,6 @@ public class shopUtil {
         player.sendMessage("Size  > " + shopInventory.getSize());
         player.openInventory(shopInventory.getInventory());
         shopMap.put(shopInventory.getInventoryID(), shopInventory.getTitle());
-        NPCComand.editorList.add(player);
+        NPCCommand.editorList.add(player);
     }
 }

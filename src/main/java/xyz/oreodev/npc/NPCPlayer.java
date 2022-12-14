@@ -13,6 +13,8 @@ import java.util.UUID;
 
 public class NPCPlayer {
 
+    //todo 스킨관련 작업
+
     public static List<NPCPlayer> npcPlayerList = new ArrayList<>();
     private UUID uuid;
     private String name;

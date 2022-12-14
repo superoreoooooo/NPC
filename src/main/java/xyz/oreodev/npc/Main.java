@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.oreodev.npc.command.NPCComand;
+import xyz.oreodev.npc.command.NPCCommand;
 import xyz.oreodev.npc.command.NPCCompleter;
 import xyz.oreodev.npc.listener.DeathListener;
 import xyz.oreodev.npc.listener.PreLoginListener;
@@ -77,7 +77,7 @@ public final class Main extends JavaPlugin {
 
         Bukkit.getLogger().info("Detected version : " + version.name());
 
-        getCommand("npc").setExecutor(new NPCComand());
+        getCommand("npc").setExecutor(new NPCCommand());
         getCommand("npc").setTabCompleter(new NPCCompleter());
 
         getServer().getPluginManager().registerEvents(new DeathListener(), this);
