@@ -136,7 +136,7 @@ public class v1_12_R1 {
             entityPlayer.closeInventory();
         }
 
-        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(craftServer.getPlayer(entityPlayer), entityPlayer.getName() + " left the game(NPC)");
+        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(craftServer.getPlayer(entityPlayer), entityPlayer.getName() + " left the game (NPC)");
 
         Bukkit.getPluginManager().callEvent(playerQuitEvent);
 
@@ -192,19 +192,6 @@ public class v1_12_R1 {
     }
 
     private static String getJoinMessage(EntityPlayer entityPlayer) {
-        GameProfile gameProfile = entityPlayer.getProfile();
-        UserCache userCache = ((CraftServer) Bukkit.getServer()).getServer().getUserCache();
-        GameProfile gameProfile1 = userCache.getProfile(entityPlayer.getName());
-
-        String str = gameProfile1 == null ? gameProfile.getName() : gameProfile1.getName();
-
-        String joinMessage;
-        if (entityPlayer.getProfile().getName().equalsIgnoreCase(str)) {
-            joinMessage = LocaleI18n.a("multiplayer.player.joined", entityPlayer.getName());
-        } else {
-            joinMessage = LocaleI18n.a("multiplayer.player.joined.renamed", entityPlayer.getName(), str);
-        }
-
-        return joinMessage;
+        return entityPlayer.getName() + " joined the game (NPC)";
     }
 }
