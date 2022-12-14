@@ -65,25 +65,6 @@ public class shopUtil {
         return null;
     }
 
-    public void listShop(Player player) {
-        player.sendMessage("total shop count : " + shopUtil.shopMap.size());
-        for (UUID uuid : shopUtil.shopMap.keySet()) {
-            player.sendMessage("UUID : " + uuid.toString() + " | Title : " + getSavedTitle(uuid) + " | Size : " + getSavedInventorySize(uuid));
-        }
-    }
-
-    public void giveItem(Player player) {
-        player.sendMessage("confirmed!");
-        ItemStack itemStack = new ItemStack(Material.BLAZE_ROD);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "밀치기 막대");
-        itemMeta.setLore(Collections.singletonList(ChatColor.GOLD + "밀치기 막대(테스트)"));
-        itemMeta.addEnchant(Enchantment.KNOCKBACK, 31321, true);
-        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-        itemStack.setItemMeta(itemMeta);
-        player.getInventory().addItem(itemStack);
-    }
-
     public void openShop(Player player, String name) {
         if (!shopMap.containsValue(name)) {
             return;
