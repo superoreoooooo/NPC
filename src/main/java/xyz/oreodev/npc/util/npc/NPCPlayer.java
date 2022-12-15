@@ -61,6 +61,9 @@ public class NPCPlayer {
     }
 
     public boolean spawn(double x, double y, double z) {
+        if (name == null) {
+            return false;
+        }
         if (name.length() >= 16) {
             return false;
         }
@@ -73,6 +76,9 @@ public class NPCPlayer {
 
         entityPlayer = v1_12_R1.spawn(this, x, y, z);
         npcPlayerList.add(this);
+
+        plugin = JavaPlugin.getPlugin(Main.class);
+        plugin.saveNPC();
 
         return true;
     }

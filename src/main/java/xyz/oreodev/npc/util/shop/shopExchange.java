@@ -96,7 +96,7 @@ public class shopExchange {
                             player.sendMessage("you have no money :( (balance left : " + acc.getBalance(player.getName()) + ")");
                             return;
                         }
-                        player.sendMessage("sold item : " + itemStack.getItemMeta().getDisplayName() + " price : " + price);
+                        player.sendMessage("bought item : " + itemStack.getItemMeta().getDisplayName() + " price : " + price);
                         player.sendMessage("balance left : " + acc.getBalance(player.getName()));
                         ItemStack clone = itemStack.clone();
                         clone.setAmount(1);

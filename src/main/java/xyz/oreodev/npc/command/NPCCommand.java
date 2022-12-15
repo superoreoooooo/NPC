@@ -138,7 +138,6 @@ public class NPCCommand implements CommandExecutor {
         plugin.ymlManager.getConfig().set("npc." + uuid + ".skin", skin);
         plugin.ymlManager.saveConfig();
         NPCPlayer.summon(plugin.ymlManager.getConfig().getString("npc." + uuid + ".name"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locX"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locY"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locZ"), UUID.fromString(uuid), plugin.ymlManager.getConfig().getString("npc." + uuid + ".skin"));
-
     }
 
     public void summon(CommandSender sender, String name) {
@@ -158,13 +157,13 @@ public class NPCCommand implements CommandExecutor {
             }
             sender.sendMessage("removed all npc!");
         } else {
-            NPCPlayer npePlayer = NPCPlayer.getNPCPlayer(name);
+            NPCPlayer npcPlayer = NPCPlayer.getNPCPlayer(name);
 
-            if (npePlayer != null) {
-                npePlayer.removeDataAndPlayer();
-                sender.sendMessage("removed npc : " + npcPlayer.getName());
+            if (npcPlayer != null) {
+                npcPlayer.removeDataAndPlayer();
+                sender.sendMessage("removed npc : " + this.npcPlayer.getName());
             } else {
-                sender.sendMessage("failed to remove npc : " + npcPlayer.getName());
+                sender.sendMessage("failed to remove npc : " + this.npcPlayer.getName());
             }
         }
     }
