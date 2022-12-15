@@ -1,6 +1,5 @@
 package xyz.oreodev.npc.command;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,13 +21,26 @@ public class itemCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player player) {
             if (player.getItemInHand() == null) return false;
-            if (args.length == 2) {
+            if (args.length == 1) {
+                if (args[0].equalsIgnoreCase("remove")) {
+                    se.removeItem(player.getItemInHand());
+                    if (player.getItemInHand().hasItemMeta()) {
+                        player.sendMessage("item removed : " + player.getItemInHand().getItemMeta().getDisplayName());
+                    } else {
+                        player.sendMessage("item removed : " + player.getItemInHand().getType().name());
+                    }
+                }
+                if (args[0].equalsIgnoreCase("list")) {
+                    se.printList(player);
+                }
+            }
+            else if (args.length == 2) {
                 if (!args[0].equalsIgnoreCase("add")) return false;
-                se.addItem(player.getItemInHand(), Integer.parseInt(args[1]));
+                se.setItem(player.getItemInHand(), Integer.parseInt(args[1]));
                 player.sendMessage("item added : " + player.getItemInHand().getItemMeta().getDisplayName() + " price : " + plugin.priceDataYmlManager.getConfig().get("item." + player.getItemInHand().getType().toString() + ".name." + player.getItemInHand().getItemMeta().getDisplayName() + ".price"));
             }
             else {
-                player.sendMessage("/i");
+                player.sendMessage("/item add (price) | remove");
             }
         }
         return false;

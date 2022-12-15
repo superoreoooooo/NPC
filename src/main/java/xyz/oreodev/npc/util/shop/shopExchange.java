@@ -7,6 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.util.acc.account;
 
+import java.util.HashMap;
+
 public class shopExchange {
     private account acc;
     private Main plugin;
@@ -16,9 +18,35 @@ public class shopExchange {
         this.plugin = JavaPlugin.getPlugin(Main.class);
     }
 
-    public void addItem(ItemStack itemStack, int price) {
+    public void printList(Player player) {
+        for (String itemType : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
+            for (String itemName : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item." + itemType + ".name.").getKeys(false)) {
+                player.sendMessage("Name : " + itemName + " | Type : " + itemType + " | Price : " + plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price"));
+            }
+        }
+    }
+
+    public void setItem(ItemStack itemStack, int price) {
         plugin.priceDataYmlManager.getConfig().set("item." + itemStack.getType().name() + ".name." + itemStack.getItemMeta().getDisplayName() + ".price", price);
         plugin.priceDataYmlManager.saveConfig();
+    }
+
+    public void removeItem(ItemStack itemStack) {
+        for (String itemType : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
+            if (itemType.equals(itemStack.getType().name())) {
+                for (String itemName : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item." + itemType + ".name.").getKeys(false)) {
+                    if (!itemStack.hasItemMeta()) { // no custom name
+                        plugin.priceDataYmlManager.getConfig().set("item." + itemType + ".name." + itemName, null);
+                        plugin.priceDataYmlManager.saveConfig();
+                        return;
+                    }
+                    else if (itemName.equals(itemStack.getItemMeta().getDisplayName())) {
+                        plugin.priceDataYmlManager.getConfig().set("item." + itemType + ".name." + itemName, null);
+                        plugin.priceDataYmlManager.saveConfig();
+                    }
+                }
+            }
+        }
     }
 
     public void sellItem(Player player, ItemStack itemStack) {
