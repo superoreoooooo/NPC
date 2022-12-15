@@ -47,6 +47,9 @@ public class account {
             accountMap.remove(playerName);
             accountMap.put(playerName, getBalance(playerName) + balanceToAdd);
         } else {
+            if (balanceToAdd < 0) {
+                return false;
+            }
             setBalance(playerName, balanceToAdd);
             accountMap.remove(playerName);
             accountMap.put(playerName, balanceToAdd);

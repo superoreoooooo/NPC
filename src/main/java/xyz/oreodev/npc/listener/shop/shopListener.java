@@ -63,7 +63,6 @@ public class shopListener implements Listener {
     public void onClick(InventoryClickEvent e) {
         if (NPCCommand.editorList.contains((Player)e.getWhoClicked())) return;
         if (e.getClickedInventory() == null) {
-            e.getWhoClicked().sendMessage("void");
             return;
         }
         if (e.getClickedInventory().getTitle().contains("_상점")) {
@@ -86,7 +85,6 @@ public class shopListener implements Listener {
         if (NPCCommand.editorList.contains((Player)e.getWhoClicked())) return;
         if (e.getInventory().getTitle().contains("_상점")) {
             if (util.getSavedInventorySize(util.getIDFromName(e.getInventory().getTitle().split("_")[0])) > Collections.min(e.getRawSlots())) {
-                e.getWhoClicked().sendMessage("nope");
                 e.setCancelled(true);
             }
         }

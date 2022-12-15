@@ -53,32 +53,28 @@ public class shopExchange {
                         int price = plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price");
                         if (!acc.addBalance(player.getName(), -1 * price)) {
                             player.sendMessage("you have no money :( (balance left : " + acc.getBalance(player.getName()) + ")");
+                            return;
                         }
                         player.sendMessage("bought item : " + itemStack.getType().name() + " for " + price);
                         player.sendMessage("balance left : " + acc.getBalance(player.getName()));
-                        player.getInventory().addItem(itemStack);
+                        ItemStack clone = itemStack.clone();
+                        clone.setAmount(1);
+                        player.getInventory().addItem(clone);
                         return;
                     }
                     else if (itemName.equals(itemStack.getItemMeta().getDisplayName())) {
                         int price = plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price");
                         if (!acc.addBalance(player.getName(), -1 * price)) {
                             player.sendMessage("you have no money :( (balance left : " + acc.getBalance(player.getName()) + ")");
+                            return;
                         }
-                        player.sendMessage("sold item : " + itemStack.getItemMeta().getDisplayName() + " for " + price);
+                        player.sendMessage("sold item : " + itemStack.getItemMeta().getDisplayName() + " price : " + price);
                         player.sendMessage("balance left : " + acc.getBalance(player.getName()));
-                        player.getInventory().addItem(itemStack);
+                        ItemStack clone = itemStack.clone();
+                        clone.setAmount(1);
+                        player.getInventory().addItem(clone);
                     }
                 }
-            }
-        }
-
-        if (itemStack.getType().equals(Material.DIAMOND_SWORD)) {
-            if (!acc.addBalance(player.getName(), -500)) {
-                player.sendMessage("you have no money :( (balance left : " + acc.getBalance(player.getName()) + ")");
-            } else {
-                player.getInventory().addItem(itemStack);
-                player.sendMessage("bought item : " + itemStack.getType().name());
-                player.sendMessage("balance left : " + acc.getBalance(player.getName()));
             }
         }
     }
