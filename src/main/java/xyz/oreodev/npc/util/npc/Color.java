@@ -1,4 +1,4 @@
-package xyz.oreodev.npc.util;
+package xyz.oreodev.npc.util.npc;
 
 import org.bukkit.ChatColor;
 

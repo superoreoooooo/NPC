@@ -23,8 +23,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -55,6 +55,11 @@
 
     <repositories>
         <repository>
+            <id>local-repository</id>
+            <name>local repository</name>
+            <url>file://${project.basedir}/lib</url>
+        </repository>
+        <repository>
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -76,6 +81,11 @@
             <artifactId>paper-api</artifactId>
             <version>1.12.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>xyz.oreodev</groupId>
+            <artifactId>money</artifactId>
+            <version>1.0.1</version>
         </dependency>
     </dependencies>
 </project>

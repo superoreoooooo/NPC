@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import xyz.oreodev.npc.Main;
-import xyz.oreodev.npc.NPCPlayer;
+import xyz.oreodev.npc.util.npc.NPCPlayer;
 
 public class DeathListener implements Listener {
     @EventHandler

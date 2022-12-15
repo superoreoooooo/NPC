@@ -7,15 +7,13 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
 import org.bukkit.metadata.FixedMetadataValue;
-import xyz.oreodev.npc.NPCPlayer;
+import xyz.oreodev.npc.util.npc.NPCPlayer;
 import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.paper.PaperUtils_v1_12_R1;
 

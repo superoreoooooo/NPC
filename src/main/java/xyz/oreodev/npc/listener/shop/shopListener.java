@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.command.NPCCommand;
+import xyz.oreodev.npc.util.shop.shopExchange;
 import xyz.oreodev.npc.util.shop.shopUtil;
 
 import java.util.ArrayList;
@@ -23,16 +24,18 @@ import java.util.UUID;
 
 public class shopListener implements Listener {
     private shopUtil util;
+    private shopExchange shopExchange;
 
     List<Player> coolDown = new ArrayList<>();
 
     public shopListener() {
+        this.shopExchange = new shopExchange();
         this.util = new shopUtil();
     }
 
     public void delay(Player player) {
         coolDown.add(player);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(JavaPlugin.getPlugin(Main.class), () -> coolDown.remove(player), 20);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(JavaPlugin.getPlugin(Main.class), () -> coolDown.remove(player), 5);
     }
 
     @EventHandler
@@ -40,11 +43,9 @@ public class shopListener implements Listener {
         Player player = e.getPlayer();
         if (coolDown.contains(player)) return;
         delay(player);
-        player.setCooldown(player.getInventory().getItemInMainHand().getType(), 20);
         if (e.getRightClicked().getType().equals(EntityType.PLAYER)) {
             if (e.getRightClicked().hasMetadata("npc")) {
                 String str = e.getRightClicked().getMetadata("npc").get(0).asString();
-                player.sendMessage(str);
                 util.openShop(player, str);
             }
         }
@@ -52,9 +53,9 @@ public class shopListener implements Listener {
 
     @EventHandler
     public void onOpen(InventoryOpenEvent e) {
+        if (NPCCommand.editorList.contains((Player)e.getPlayer())) return;
         if (e.getInventory().getTitle().contains("_상점")) {
-            if (NPCCommand.editorList.contains((Player)e.getPlayer())) return;
-            e.getPlayer().sendMessage("opened shop : " + e.getInventory().getTitle().split("_")[0]);
+            //e.getPlayer().sendMessage("opened shop : " + e.getInventory().getTitle().split("_")[0]);
         }
     }
 
@@ -63,19 +64,19 @@ public class shopListener implements Listener {
         if (NPCCommand.editorList.contains((Player)e.getWhoClicked())) return;
         if (e.getClickedInventory() == null) {
             e.getWhoClicked().sendMessage("void");
+            return;
         }
         if (e.getClickedInventory().getTitle().contains("_상점")) {
             e.setCancelled(true);
-            e.getWhoClicked().sendMessage("구매");
-            //todo 구매
+            if (coolDown.contains((Player)e.getWhoClicked())) return;
+            delay((Player)e.getWhoClicked());
+            shopExchange.buyItem((Player)e.getWhoClicked(), e.getCurrentItem());
         }
-        if (e.getInventory().getTitle().contains("_상점")) {
-            ClickType ct = e.getClick();
-            if (ct.equals(ClickType.SHIFT_LEFT) || ct.equals(ClickType.SHIFT_RIGHT) || ct.equals(ClickType.UNKNOWN)) {
-                e.setCancelled(true);
-                e.getWhoClicked().sendMessage("판매");
-            }
-            //todo 판매
+        else if (e.getInventory().getTitle().contains("_상점")) {
+            e.setCancelled(true);
+            if (coolDown.contains((Player)e.getWhoClicked())) return;
+            delay((Player)e.getWhoClicked());
+            shopExchange.sellItem((Player) e.getWhoClicked(), e.getCurrentItem());
         }
         //e.getWhoClicked().sendMessage(e.getClickedInventory().getName() + " // " + e.getClick().toString() + " // " + e.getCurrentItem().getType().toString() + " // " + e.getCursor().getType().toString() + " // " + e.getAction().toString());
     }
@@ -128,7 +129,7 @@ public class shopListener implements Listener {
                     e.getPlayer().sendMessage(str);
                 }
             } else {
-                e.getPlayer().sendMessage("closed shop : " + storeName[0]);
+                //e.getPlayer().sendMessage("closed shop : " + storeName[0]);
             }
         }
         NPCCommand.editorList.remove((Player)e.getPlayer());

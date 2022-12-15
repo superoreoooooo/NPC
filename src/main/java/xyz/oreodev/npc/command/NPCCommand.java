@@ -8,8 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
-import xyz.oreodev.npc.NPCPlayer;
-import xyz.oreodev.npc.util.Color;
+import xyz.oreodev.npc.util.npc.NPCPlayer;
+import xyz.oreodev.npc.util.npc.Color;
 import xyz.oreodev.npc.util.shop.shopUtil;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class NPCCommand implements CommandExecutor {
                         break;
                     case "remove":
                         if (args.length == 2) {
-                            disband(sender, args[1]);
+                            remove(sender, args[1]);
                             util.removeShop((Player) sender, args[1]);
                         } else {
                             Bukkit.dispatchCommand(sender, "npc");
@@ -104,7 +104,7 @@ public class NPCCommand implements CommandExecutor {
         }
     }
 
-    private void disband(CommandSender sender, String name) {
+    private void remove(CommandSender sender, String name) {
         if (name.equalsIgnoreCase("All")) {
             List<NPCPlayer> copy = new ArrayList<>(NPCPlayer.getNPCPlayerList());
             for (NPCPlayer player : copy) {

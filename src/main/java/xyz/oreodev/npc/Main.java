@@ -1,19 +1,30 @@
 package xyz.oreodev.npc;
 
 import net.minecraft.server.v1_12_R1.EntityPlayer;
+import net.minecraft.server.v1_12_R1.ItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.command.NPCCommand;
 import xyz.oreodev.npc.command.NPCCompleter;
+import xyz.oreodev.npc.command.accCommand;
 import xyz.oreodev.npc.listener.DeathListener;
 import xyz.oreodev.npc.listener.PreLoginListener;
+import xyz.oreodev.npc.listener.accListener;
 import xyz.oreodev.npc.listener.playerMovementListener;
 import xyz.oreodev.npc.listener.shop.shopListener;
+import xyz.oreodev.npc.manager.accYmlManager;
 import xyz.oreodev.npc.manager.npcYmlManager;
+import xyz.oreodev.npc.manager.priceDataYmlManager;
 import xyz.oreodev.npc.manager.shopYmlManager;
+import xyz.oreodev.npc.util.acc.account;
+import xyz.oreodev.npc.util.npc.NPCPlayer;
+import xyz.oreodev.npc.util.shop.shopExchange;
 import xyz.oreodev.npc.util.shop.shopUtil;
 import xyz.oreodev.npc.version.Version;
 
@@ -24,13 +35,15 @@ import java.util.UUID;
 public final class Main extends JavaPlugin {
     private static Main plugin;
     public FileConfiguration config;
+    public accYmlManager moneyConfig;
     public npcYmlManager ymlManager;
     public shopYmlManager shopYmlManager;
+    public priceDataYmlManager priceDataYmlManager;
 
-    private boolean usesCraftBukkit = false;
     private boolean usesPaper = false;
     private boolean updatedPaper = false;
 
+    private account acc;
     private NPCPlayer npcPlayer;
 
     public static List<EntityPlayer> npcs = new ArrayList<>();
@@ -79,25 +92,28 @@ public final class Main extends JavaPlugin {
 
         getCommand("npc").setExecutor(new NPCCommand());
         getCommand("npc").setTabCompleter(new NPCCompleter());
+        getCommand("account").setExecutor(new accCommand());
 
         getServer().getPluginManager().registerEvents(new DeathListener(), this);
         getServer().getPluginManager().registerEvents(new PreLoginListener(), this);
         getServer().getPluginManager().registerEvents(new playerMovementListener(), this);
         getServer().getPluginManager().registerEvents(new shopListener(), this);
+        Bukkit.getPluginManager().registerEvents(new accListener(), this);
 
         plugin = this;
+
+        this.acc = new account();
 
         checkForClasses();
 
         this.ymlManager = new npcYmlManager(this);
         this.shopYmlManager = new shopYmlManager(this);
+        this.moneyConfig = new accYmlManager(this);
+        this.priceDataYmlManager = new priceDataYmlManager(this);
 
+        initializeAccount();
         initializeNPC();
         initializeShop();
-    }
-
-    public boolean usesCraftBukkit() {
-        return usesCraftBukkit;
     }
 
     @Override
@@ -113,6 +129,15 @@ public final class Main extends JavaPlugin {
         loadNPC();
     }
 
+    public void initializeAccount() {
+        Bukkit.getConsoleSender().sendMessage("========================================");
+        for (String name : this.moneyConfig.getConfig().getConfigurationSection("account.").getKeys(false)) {
+            account.accountMap.put(name, acc.getBalance(name));
+            Bukkit.getConsoleSender().sendMessage("account : " + name + " | balance : " + acc.getBalance(name));
+        }
+        Bukkit.getConsoleSender().sendMessage("========================================");
+    }
+
     public void initializeShop() {
         shopUtil util = new shopUtil();
         for (String uuid : plugin.shopYmlManager.getConfig().getConfigurationSection("shop.").getKeys(false)) {
@@ -121,6 +146,18 @@ public final class Main extends JavaPlugin {
         for (UUID uuid : shopUtil.shopMap.keySet()) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "Loaded shop / uuid : " + uuid + " name : " + shopUtil.shopMap.get(uuid));
         }
+
+        shopExchange se = new shopExchange();
+
+        org.bukkit.inventory.ItemStack item = new org.bukkit.inventory.ItemStack(Material.STICK);
+        se.addItem(item, 1);
+
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("test");
+        item.addUnsafeEnchantment(Enchantment.KNOCKBACK, 255);
+        item.setItemMeta(meta);
+
+        se.addItem(item, 2);
     }
 
     public static UUID getRandomUUID(String name) {

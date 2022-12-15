@@ -81,7 +81,7 @@ public class shopUtil {
         player.sendMessage("Size  > " + getSavedInventorySize(key));
         for (int i = 0; i < getSavedInventorySize(key); i++) {
             if (getSavedItemStack(key, i) == null) continue;
-            player.sendMessage("Item" + i + "  > " + getSavedItemStack(key, i));
+            player.sendMessage("saved Item " + i + " : " + getSavedItemStack(key, i));
         }
         player.openInventory(shopInventory.getInventory());
     }
@@ -96,7 +96,8 @@ public class shopUtil {
         player.sendMessage("Title > " + getSavedTitle(key));
         player.sendMessage("Size  > " + getSavedInventorySize(key));
         for (int i = 0; i < getSavedInventorySize(key); i++) {
-            player.sendMessage("Item" + i + "  > " + getSavedItemStack(key, i));
+            if (getSavedItemStack(key, i) == null) continue;
+            player.sendMessage("removed Item " + i + " : " + getSavedItemStack(key, i));
         }
         removeInventory(key);
         shopUtil.shopMap.remove(key);

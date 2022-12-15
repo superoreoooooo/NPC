@@ -1,10 +1,10 @@
-package xyz.oreodev.npc;
+package xyz.oreodev.npc.util.npc;
 
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.version.v1_12_R1;
 
 import java.util.ArrayList;
