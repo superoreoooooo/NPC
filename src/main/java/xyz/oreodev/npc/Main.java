@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.command.NPCCommand;
 import xyz.oreodev.npc.command.NPCCompleter;
 import xyz.oreodev.npc.command.accCommand;
+import xyz.oreodev.npc.command.itemCommand;
 import xyz.oreodev.npc.listener.DeathListener;
 import xyz.oreodev.npc.listener.PreLoginListener;
 import xyz.oreodev.npc.listener.accListener;
@@ -93,6 +94,7 @@ public final class Main extends JavaPlugin {
         getCommand("npc").setExecutor(new NPCCommand());
         getCommand("npc").setTabCompleter(new NPCCompleter());
         getCommand("account").setExecutor(new accCommand());
+        getCommand("item").setExecutor(new itemCommand());
 
         getServer().getPluginManager().registerEvents(new DeathListener(), this);
         getServer().getPluginManager().registerEvents(new PreLoginListener(), this);
