@@ -14,6 +14,7 @@ import xyz.oreodev.npc.util.shop.shopUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class NPCCommand implements CommandExecutor {
     private NPCPlayer npcPlayer;
@@ -33,13 +34,26 @@ public class NPCCommand implements CommandExecutor {
         if (!(sender instanceof Player)) return false;
         if (sender.hasPermission("administrators")) {
             if (args.length == 0) {
-                sender.sendMessage("/npc list | open (name) | add (name) (size) | remove (name) / (all) | edit (name) | size (name)");
+                sender.sendMessage("/npc list | open (name) | tp (name) | add (name) (size) | skin (name) (skinOwner) | remove (name) / (all) | edit (name) | size (name)");
             } else {
                 switch (args[0]) {
-                    case "save":
+                    case "save" :
                         plugin.saveNPC();
                         break;
-                    case "add":
+                    case "name" :
+                        //TODO npc 이름 변경
+                        break;
+                    case "skin" :
+                        if (args.length == 3) {
+                            setSkin(sender, args[1], args[2]);
+                        }
+                        break;
+                    case "tp" :
+                        if (args.length == 2) {
+                            teleport(sender, args[1]);
+                        }
+                        break;
+                    case "add" :
                         if (args.length == 2) {
                             summon(sender, args[1]);
                             util.createShop((Player) sender, args[1], "9");
@@ -51,14 +65,14 @@ public class NPCCommand implements CommandExecutor {
                             Bukkit.dispatchCommand(sender, "npc");
                         }
                         break;
-                    case "size":
+                    case "size" :
                         if (args.length == 3) {
                             util.saveInventorySize(util.getIDFromName(args[1]), Integer.parseInt(args[2]));
                         } else {
                             Bukkit.dispatchCommand(sender, "npc");
                         }
                         break;
-                    case "remove":
+                    case "remove" :
                         if (args.length == 2) {
                             remove(sender, args[1]);
                             util.removeShop((Player) sender, args[1]);
@@ -66,19 +80,19 @@ public class NPCCommand implements CommandExecutor {
                             Bukkit.dispatchCommand(sender, "npc");
                         }
                         break;
-                    case "list":
+                    case "list" :
                         if (args.length == 1) {
                             list(sender);
                         } else {
                             Bukkit.dispatchCommand(sender, "npc");
                         }
                         break;
-                    case "open":
+                    case "open" :
                         if (args.length == 2) {
                             util.openShop((Player) sender, args[1]);
                         }
                         break;
-                    case "edit":
+                    case "edit" :
                         if (args.length == 2) {
                             util.editShop((Player) sender, args[1]);
                         }
@@ -95,9 +109,41 @@ public class NPCCommand implements CommandExecutor {
         return false;
     }
 
+    public void teleport(CommandSender sender, String name) {
+        NPCPlayer player = NPCPlayer.getNPCPlayer(name);
+        if (player == null) {
+            Bukkit.dispatchCommand(sender, "npc");
+            return;
+        }
+        UUID uid = player.getUUID();
+        String uuid = uid.toString();
+        Location location = ((Player) sender).getLocation();
+        player.removePlayer();
+        plugin.ymlManager.getConfig().set("npc." + uuid + ".locX", location.getX());
+        plugin.ymlManager.getConfig().set("npc." + uuid + ".locY", location.getY());
+        plugin.ymlManager.getConfig().set("npc." + uuid + ".locZ", location.getZ());
+        plugin.ymlManager.saveConfig();
+        NPCPlayer.summon(plugin.ymlManager.getConfig().getString("npc." + uuid + ".name"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locX"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locY"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locZ"), UUID.fromString(uuid), plugin.ymlManager.getConfig().getString("npc." + uuid + ".skin"));
+    }
+
+    public void setSkin(CommandSender sender, String name, String skin) {
+        NPCPlayer player = NPCPlayer.getNPCPlayer(name);
+        if (player == null) {
+            Bukkit.dispatchCommand(sender, "npc");
+            return;
+        }
+        UUID uid = player.getUUID();
+        String uuid = uid.toString();
+        player.removePlayer();
+        plugin.ymlManager.getConfig().set("npc." + uuid + ".skin", skin);
+        plugin.ymlManager.saveConfig();
+        NPCPlayer.summon(plugin.ymlManager.getConfig().getString("npc." + uuid + ".name"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locX"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locY"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locZ"), UUID.fromString(uuid), plugin.ymlManager.getConfig().getString("npc." + uuid + ".skin"));
+
+    }
+
     public void summon(CommandSender sender, String name) {
         Location loc = ((Player)sender).getLocation();
-        if (NPCPlayer.summon(name, loc.getX(), loc.getY(), loc.getZ(), Main.getRandomUUID(name))) {
+        if (NPCPlayer.summon(name, loc.getX(), loc.getY(), loc.getZ(), Main.getRandomUUID(name), name)) {
             sender.sendMessage("succeed to add new npc!");
         } else {
             sender.sendMessage("failed to add new npc!");

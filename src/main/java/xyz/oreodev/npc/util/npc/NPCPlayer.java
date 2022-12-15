@@ -13,17 +13,17 @@ import java.util.UUID;
 
 public class NPCPlayer {
 
-    //todo 스킨관련 작업
-
     public static List<NPCPlayer> npcPlayerList = new ArrayList<>();
     private UUID uuid;
     private String name;
     private EntityPlayer entityPlayer;
     private Main plugin;
+    private String skinName;
 
-    public NPCPlayer(UUID uuid, String name) {
+    public NPCPlayer(UUID uuid, String name, String skinName) {
         this.uuid = uuid;
         this.name = name;
+        this.skinName = skinName;
     }
 
     public NPCPlayer() {
@@ -56,8 +56,8 @@ public class NPCPlayer {
         return npcPlayerList;
     }
 
-    public static boolean summon(String name, double x, double y, double z, UUID uuid) {
-        return new NPCPlayer(uuid, name).spawn(x, y, z);
+    public static boolean summon(String name, double x, double y, double z, UUID uuid, String skin) {
+        return new NPCPlayer(uuid, name, skin).spawn(x, y, z);
     }
 
     public boolean spawn(double x, double y, double z) {
@@ -77,12 +77,17 @@ public class NPCPlayer {
         return true;
     }
 
+
     public UUID getUUID() {
         return uuid;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getSkinName() {
+        return skinName;
     }
 
     public EntityPlayer getEntityPlayer() {

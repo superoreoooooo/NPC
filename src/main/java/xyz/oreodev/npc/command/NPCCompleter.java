@@ -14,9 +14,12 @@ public class NPCCompleter implements TabCompleter {
 
     public NPCCompleter() {
         commands.add("list");
+        commands.add("open");
         commands.add("add");
+        commands.add("skin");
         commands.add("remove");
-        commands.add("reload");
+        commands.add("edit");
+        commands.add("size");
     }
 
     @Override

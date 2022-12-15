@@ -146,18 +146,6 @@ public final class Main extends JavaPlugin {
         for (UUID uuid : shopUtil.shopMap.keySet()) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "Loaded shop / uuid : " + uuid + " name : " + shopUtil.shopMap.get(uuid));
         }
-
-        shopExchange se = new shopExchange();
-
-        org.bukkit.inventory.ItemStack item = new org.bukkit.inventory.ItemStack(Material.STICK);
-        se.addItem(item, 1);
-
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("test");
-        item.addUnsafeEnchantment(Enchantment.KNOCKBACK, 255);
-        item.setItemMeta(meta);
-
-        se.addItem(item, 2);
     }
 
     public static UUID getRandomUUID(String name) {
@@ -173,6 +161,7 @@ public final class Main extends JavaPlugin {
                     plugin.ymlManager.getConfig().set("npc." + npcPlayer.getUUID().toString() + ".locX", npcPlayer.getEntityPlayer().getBukkitEntity().getLocation().getX());
                     plugin.ymlManager.getConfig().set("npc." + npcPlayer.getUUID().toString() + ".locY", npcPlayer.getEntityPlayer().getBukkitEntity().getLocation().getY());
                     plugin.ymlManager.getConfig().set("npc." + npcPlayer.getUUID().toString() + ".locZ", npcPlayer.getEntityPlayer().getBukkitEntity().getLocation().getZ());
+                    plugin.ymlManager.getConfig().set("npc." + npcPlayer.getUUID().toString() + ".skin", npcPlayer.getSkinName());
                     plugin.ymlManager.saveConfig();
                     Bukkit.getConsoleSender().sendMessage( "(NPC) uuid : " + npcPlayer.getUUID().toString() + " name : " + npcPlayer.getName() + " saved!");
                 }
@@ -183,8 +172,8 @@ public final class Main extends JavaPlugin {
     public void loadNPC() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "test");
         for (String uuid : plugin.ymlManager.getConfig().getConfigurationSection("npc.").getKeys(false)) {
-            if (NPCPlayer.summon(plugin.ymlManager.getConfig().getString("npc." + uuid + ".name"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locX"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locY"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locZ"), UUID.fromString(uuid))) {
-                Bukkit.getConsoleSender().sendMessage("Loaded NPC : " + plugin.ymlManager.getConfig().getString("npc." + uuid + ".name"));
+            if (NPCPlayer.summon(plugin.ymlManager.getConfig().getString("npc." + uuid + ".name"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locX"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locY"), plugin.ymlManager.getConfig().getDouble("npc." + uuid + ".locZ"), UUID.fromString(uuid), plugin.ymlManager.getConfig().getString("npc." + uuid + ".skin"))) {
+                Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "Loaded NPC : " + plugin.ymlManager.getConfig().getString("npc." + uuid + ".name"));
             }
         }
     }

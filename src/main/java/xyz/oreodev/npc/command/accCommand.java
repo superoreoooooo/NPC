@@ -43,7 +43,7 @@ public class accCommand implements CommandExecutor {
                     }
                     break;
                 case "remove" :
-                    if (!checkPermission(sender)) {
+                    if (checkPermission(sender)) {
                         sender.sendMessage("no permission!");
                         return false;
                     }
@@ -54,14 +54,14 @@ public class accCommand implements CommandExecutor {
                     else Bukkit.dispatchCommand(sender, "account help");
                     break;
                 case "list" :
-                    if (!checkPermission(sender)) {
+                    if (checkPermission(sender)) {
                         sender.sendMessage("no permission!");
                         return false;
                     }
                     account.printAllAccountData(sender);
                     break;
                 case "set" :
-                    if (!checkPermission(sender)) {
+                    if (checkPermission(sender)) {
                         sender.sendMessage("no permission!");
                         return false;
                     }
@@ -72,7 +72,7 @@ public class accCommand implements CommandExecutor {
                     else Bukkit.dispatchCommand(sender, "account help");
                     break;
                 case "add" :
-                    if (!checkPermission(sender)) {
+                    if (checkPermission(sender)) {
                         sender.sendMessage("no permission!");
                         return false;
                     }
@@ -93,6 +93,6 @@ public class accCommand implements CommandExecutor {
     }
 
     public boolean checkPermission(CommandSender sender) {
-        return sender.hasPermission("administrators");
+        return !sender.hasPermission("administrators");
     }
 }
