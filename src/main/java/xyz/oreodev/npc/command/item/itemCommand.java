@@ -1,4 +1,4 @@
-package xyz.oreodev.npc.command;
+package xyz.oreodev.npc.command.item;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -35,12 +35,12 @@ public class itemCommand implements CommandExecutor {
                 }
             }
             else if (args.length == 2) {
-                if (!args[0].equalsIgnoreCase("add")) return false;
+                if (!args[0].equalsIgnoreCase("set")) return false;
                 se.setItem(player.getItemInHand(), Integer.parseInt(args[1]));
                 player.sendMessage("item added : " + player.getItemInHand().getItemMeta().getDisplayName() + " price : " + plugin.priceDataYmlManager.getConfig().get("item." + player.getItemInHand().getType().toString() + ".name." + player.getItemInHand().getItemMeta().getDisplayName() + ".price"));
             }
             else {
-                player.sendMessage("/item add (price) | remove");
+                player.sendMessage("/item set (price) | remove");
             }
         }
         return false;

@@ -1,4 +1,4 @@
-package xyz.oreodev.npc.command;
+package xyz.oreodev.npc.command.acc;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -30,7 +30,7 @@ public class accCommand implements CommandExecutor {
                                 player.sendMessage("check player name");
                                 return false;
                             }
-                            if (!account.addBalance(player.getName(), account.getBalance(player.getName()) - Integer.parseInt(args[2]))) {
+                            if (account.getBalance(player.getName()) - Integer.parseInt(args[2]) < 0) {
                                 player.sendMessage("you have no balance :( (" + account.getBalance(player.getName()) + ")");
                                 return false;
                             }

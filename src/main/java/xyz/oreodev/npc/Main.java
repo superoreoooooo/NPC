@@ -1,19 +1,17 @@
 package xyz.oreodev.npc;
 
 import net.minecraft.server.v1_12_R1.EntityPlayer;
-import net.minecraft.server.v1_12_R1.ItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.oreodev.npc.command.NPCCommand;
-import xyz.oreodev.npc.command.NPCCompleter;
-import xyz.oreodev.npc.command.accCommand;
-import xyz.oreodev.npc.command.itemCommand;
+import xyz.oreodev.npc.command.acc.accCompleter;
+import xyz.oreodev.npc.command.item.itemCompleter;
+import xyz.oreodev.npc.command.npc.NPCCommand;
+import xyz.oreodev.npc.command.npc.NPCCompleter;
+import xyz.oreodev.npc.command.acc.accCommand;
+import xyz.oreodev.npc.command.item.itemCommand;
 import xyz.oreodev.npc.listener.DeathListener;
 import xyz.oreodev.npc.listener.PreLoginListener;
 import xyz.oreodev.npc.listener.accListener;
@@ -25,7 +23,6 @@ import xyz.oreodev.npc.manager.priceDataYmlManager;
 import xyz.oreodev.npc.manager.shopYmlManager;
 import xyz.oreodev.npc.util.acc.account;
 import xyz.oreodev.npc.util.npc.NPCPlayer;
-import xyz.oreodev.npc.util.shop.shopExchange;
 import xyz.oreodev.npc.util.shop.shopUtil;
 import xyz.oreodev.npc.version.Version;
 
@@ -94,13 +91,15 @@ public final class Main extends JavaPlugin {
         getCommand("npc").setExecutor(new NPCCommand());
         getCommand("npc").setTabCompleter(new NPCCompleter());
         getCommand("account").setExecutor(new accCommand());
+        getCommand("account").setTabCompleter(new accCompleter());
         getCommand("item").setExecutor(new itemCommand());
+        getCommand("item").setTabCompleter(new itemCompleter());
 
         getServer().getPluginManager().registerEvents(new DeathListener(), this);
         getServer().getPluginManager().registerEvents(new PreLoginListener(), this);
         getServer().getPluginManager().registerEvents(new playerMovementListener(), this);
         getServer().getPluginManager().registerEvents(new shopListener(), this);
-        Bukkit.getPluginManager().registerEvents(new accListener(), this);
+        getServer().getPluginManager().registerEvents(new accListener(), this);
 
         plugin = this;
 

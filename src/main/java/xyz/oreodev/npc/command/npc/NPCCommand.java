@@ -1,4 +1,4 @@
-package xyz.oreodev.npc.command;
+package xyz.oreodev.npc.command.npc;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -40,9 +40,6 @@ public class NPCCommand implements CommandExecutor {
                     case "save" :
                         plugin.saveNPC();
                         break;
-                    case "name" :
-                        //TODO npc 이름 변경
-                        break;
                     case "skin" :
                         if (args.length == 3) {
                             setSkin(sender, args[1], args[2]);
@@ -67,6 +64,7 @@ public class NPCCommand implements CommandExecutor {
                         break;
                     case "size" :
                         if (args.length == 3) {
+                            if (Integer.parseInt(args[2]) % 9 != 0) return false;
                             util.saveInventorySize(util.getIDFromName(args[1]), Integer.parseInt(args[2]));
                         } else {
                             Bukkit.dispatchCommand(sender, "npc");

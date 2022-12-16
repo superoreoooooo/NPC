@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
-import xyz.oreodev.npc.command.NPCCommand;
+import xyz.oreodev.npc.command.npc.NPCCommand;
 
 import java.util.HashMap;
 import java.util.UUID;

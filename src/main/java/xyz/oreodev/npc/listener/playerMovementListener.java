@@ -12,7 +12,6 @@ import xyz.oreodev.npc.Main;
 public class playerMovementListener implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
-        if (e.getPlayer().getItemInHand().getType().equals(Material.DIAMOND_SWORD)) return;
         Main.npcs.stream().forEach(npc -> {
             Location playerLoc = e.getPlayer().getLocation();
             Location location = npc.getBukkitEntity().getLocation();
