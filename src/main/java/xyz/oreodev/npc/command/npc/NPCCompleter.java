@@ -14,12 +14,13 @@ public class NPCCompleter implements TabCompleter {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
             completions.add("list");
-            completions.add("open");
-            completions.add("add");
-            completions.add("skin");
-            completions.add("remove");
-            completions.add("edit");
             completions.add("size");
+            completions.add("skin");
+            completions.add("add");
+            completions.add("open");
+            completions.add("edit");
+            completions.add("tp");
+            completions.add("remove");
             return completions;
         }
         else if (args.length == 2) {

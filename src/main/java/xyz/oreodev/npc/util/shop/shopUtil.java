@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.command.npc.NPCCommand;
+import xyz.oreodev.npc.listener.shop.shopListener;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -66,6 +67,7 @@ public class shopUtil {
         UUID key = getIDFromName(name);
         shopInventory shopInventory = new shopInventory(key, getSavedTitle(key), getSavedInventorySize(key));
         player.openInventory(shopInventory.getInventory());
+        shopListener.shopList.add(shopInventory.getInventory());
     }
 
     public void editShop(Player player, String name) {

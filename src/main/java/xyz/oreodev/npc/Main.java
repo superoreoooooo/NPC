@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.command.acc.accCompleter;
 import xyz.oreodev.npc.command.item.itemCompleter;
@@ -115,6 +116,10 @@ public final class Main extends JavaPlugin {
         initializeAccount();
         initializeNPC();
         initializeShop();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.spigot().setCollidesWithEntities(false);
+        }
     }
 
     @Override

@@ -16,6 +16,10 @@ public class accCompleter implements TabCompleter {
             completions.add("help");
             completions.add("now");
             completions.add("list");
+            completions.add("set");
+            completions.add("send");
+            completions.add("add");
+            completions.add("remove");
             return completions;
         }
         else if (args.length == 2) {

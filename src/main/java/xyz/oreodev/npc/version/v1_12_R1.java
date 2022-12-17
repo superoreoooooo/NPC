@@ -127,6 +127,8 @@ public class v1_12_R1 {
 
         Main.npcs.add(entityPlayer);
 
+        entityPlayer.getBukkitEntity().spigot().setCollidesWithEntities(false);
+
         return entityPlayer;
     }
 
