@@ -3,12 +3,12 @@ package xyz.oreodev.npc.listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import xyz.oreodev.npc.util.acc.account;
+import xyz.oreodev.npc.util.account.account;
 
-public class accListener implements Listener {
-    private xyz.oreodev.npc.util.acc.account account;
+public class accountListener implements Listener {
+    private xyz.oreodev.npc.util.account.account account;
 
-    public accListener() {
+    public accountListener() {
         account = new account();
     }
     @EventHandler

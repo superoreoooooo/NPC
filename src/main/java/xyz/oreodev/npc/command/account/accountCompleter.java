@@ -1,4 +1,4 @@
-package xyz.oreodev.npc.command.acc;
+package xyz.oreodev.npc.command.account;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -8,7 +8,7 @@ import xyz.oreodev.npc.util.npc.NPCPlayer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class accCompleter implements TabCompleter {
+public class accountCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> completions = new ArrayList<>();

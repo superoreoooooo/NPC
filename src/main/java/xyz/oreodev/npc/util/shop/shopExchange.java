@@ -1,13 +1,10 @@
 package xyz.oreodev.npc.util.shop;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
-import xyz.oreodev.npc.util.acc.account;
-
-import java.util.HashMap;
+import xyz.oreodev.npc.util.account.account;
 
 public class shopExchange {
     private account acc;

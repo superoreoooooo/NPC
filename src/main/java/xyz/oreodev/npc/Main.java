@@ -7,22 +7,22 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.oreodev.npc.command.acc.accCompleter;
+import xyz.oreodev.npc.command.account.accountCompleter;
 import xyz.oreodev.npc.command.item.itemCompleter;
 import xyz.oreodev.npc.command.npc.NPCCommand;
 import xyz.oreodev.npc.command.npc.NPCCompleter;
-import xyz.oreodev.npc.command.acc.accCommand;
+import xyz.oreodev.npc.command.account.accountCommand;
 import xyz.oreodev.npc.command.item.itemCommand;
 import xyz.oreodev.npc.listener.DeathListener;
 import xyz.oreodev.npc.listener.PreLoginListener;
-import xyz.oreodev.npc.listener.accListener;
+import xyz.oreodev.npc.listener.accountListener;
 import xyz.oreodev.npc.listener.playerMovementListener;
 import xyz.oreodev.npc.listener.shop.shopListener;
-import xyz.oreodev.npc.manager.accYmlManager;
+import xyz.oreodev.npc.manager.accountYmlManager;
 import xyz.oreodev.npc.manager.npcYmlManager;
 import xyz.oreodev.npc.manager.priceDataYmlManager;
 import xyz.oreodev.npc.manager.shopYmlManager;
-import xyz.oreodev.npc.util.acc.account;
+import xyz.oreodev.npc.util.account.account;
 import xyz.oreodev.npc.util.npc.NPCPlayer;
 import xyz.oreodev.npc.util.shop.shopUtil;
 import xyz.oreodev.npc.version.Version;
@@ -34,7 +34,7 @@ import java.util.UUID;
 public final class Main extends JavaPlugin {
     private static Main plugin;
     public FileConfiguration config;
-    public accYmlManager moneyConfig;
+    public accountYmlManager moneyConfig;
     public npcYmlManager ymlManager;
     public shopYmlManager shopYmlManager;
     public priceDataYmlManager priceDataYmlManager;
@@ -91,8 +91,8 @@ public final class Main extends JavaPlugin {
 
         getCommand("npc").setExecutor(new NPCCommand());
         getCommand("npc").setTabCompleter(new NPCCompleter());
-        getCommand("account").setExecutor(new accCommand());
-        getCommand("account").setTabCompleter(new accCompleter());
+        getCommand("account").setExecutor(new accountCommand());
+        getCommand("account").setTabCompleter(new accountCompleter());
         getCommand("item").setExecutor(new itemCommand());
         getCommand("item").setTabCompleter(new itemCompleter());
 
@@ -100,7 +100,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PreLoginListener(), this);
         getServer().getPluginManager().registerEvents(new playerMovementListener(), this);
         getServer().getPluginManager().registerEvents(new shopListener(), this);
-        getServer().getPluginManager().registerEvents(new accListener(), this);
+        getServer().getPluginManager().registerEvents(new accountListener(), this);
 
         plugin = this;
 
@@ -110,7 +110,7 @@ public final class Main extends JavaPlugin {
 
         this.ymlManager = new npcYmlManager(this);
         this.shopYmlManager = new shopYmlManager(this);
-        this.moneyConfig = new accYmlManager(this);
+        this.moneyConfig = new accountYmlManager(this);
         this.priceDataYmlManager = new priceDataYmlManager(this);
 
         initializeAccount();

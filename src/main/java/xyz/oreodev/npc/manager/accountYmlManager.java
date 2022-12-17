@@ -11,23 +11,23 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 
-public class accYmlManager {
+public class accountYmlManager {
     private final Main plugin;
     private FileConfiguration dataConfig = null;
     private File configFile = null;
 
-    public accYmlManager(Main plugin) {
+    public accountYmlManager(Main plugin) {
         this.plugin = plugin;
         saveDefaultConfig();
     }
 
     public void reloadConfig() {
         if (this.configFile == null) {
-            this.configFile = new File(this.plugin.getDataFolder(), "money.yml");
+            this.configFile = new File(this.plugin.getDataFolder(), "account.yml");
         }
         this.dataConfig = YamlConfiguration.loadConfiguration(this.configFile);
 
-        InputStream defaultStream = this.plugin.getResource("money.yml");
+        InputStream defaultStream = this.plugin.getResource("account.yml");
         if (defaultStream != null) {
             YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
             this.dataConfig.setDefaults(defaultConfig);
@@ -54,10 +54,10 @@ public class accYmlManager {
 
     public void saveDefaultConfig() {
         if (this.configFile == null) {
-            this.configFile = new File(this.plugin.getDataFolder(), "money.yml");
+            this.configFile = new File(this.plugin.getDataFolder(), "account.yml");
         }
         if (!(this.configFile.exists())) {
-            this.plugin.saveResource("money.yml", false);
+            this.plugin.saveResource("account.yml", false);
         }
     }
 }

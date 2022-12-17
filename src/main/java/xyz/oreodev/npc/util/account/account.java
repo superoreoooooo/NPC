@@ -1,6 +1,5 @@
-package xyz.oreodev.npc.util.acc;
+package xyz.oreodev.npc.util.account;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
