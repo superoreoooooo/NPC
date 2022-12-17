@@ -71,7 +71,6 @@ public class shopUtil {
 
     public void editShop(Player player, String name) {
         if (!shopMap.containsValue(name)) {
-            player.sendMessage("/shop edit (name)");
             return;
         }
         NPCCommand.editorList.add(player);
@@ -82,7 +81,6 @@ public class shopUtil {
 
     public void removeShop(Player player, String name) {
         if (!shopMap.containsValue(name)) {
-            player.sendMessage("/shop remove (name)");
             return;
         }
         UUID key = getIDFromName(name);

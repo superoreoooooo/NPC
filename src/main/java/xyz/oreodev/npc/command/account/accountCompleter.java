@@ -3,6 +3,7 @@ package xyz.oreodev.npc.command.account;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import xyz.oreodev.npc.util.account.account;
 import xyz.oreodev.npc.util.npc.NPCPlayer;
 
 import java.util.ArrayList;
@@ -28,9 +29,7 @@ public class accountCompleter implements TabCompleter {
                 case "remove" :
                 case "set" :
                 case "add" :
-                    for (NPCPlayer player : NPCPlayer.getNPCPlayerList()) {
-                        completions.add(player.getName());
-                    }
+                    completions.addAll(account.accountMap.keySet());
                     break;
             }
             return completions;

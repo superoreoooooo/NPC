@@ -188,13 +188,11 @@ public class NPCCommand implements CommandExecutor {
     }
 
     private void list(CommandSender sender) {
-        sender.sendMessage("========================================");
         String[] args = new String[1];
         for (NPCPlayer player : NPCPlayer.npcPlayerList) {
             args[0] = player.getName();
             sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.list", args));
         }
-        sender.sendMessage("========================================");
 
     }
 }

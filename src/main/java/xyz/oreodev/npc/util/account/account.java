@@ -57,13 +57,11 @@ public class account {
     }
 
     public void printAllAccountData(CommandSender sender) {
-        sender.sendMessage("========================================");
         for (String name : accountMap.keySet()) {
             String[] args = new String[2];
             args[0] = name;
             args[1] = String.valueOf(getBalance(name));
             sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.list", args));
         }
-        sender.sendMessage("========================================");
     }
 }
