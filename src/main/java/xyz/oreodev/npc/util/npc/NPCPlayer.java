@@ -78,7 +78,12 @@ public class NPCPlayer {
         npcPlayerList.add(this);
 
         plugin = JavaPlugin.getPlugin(Main.class);
-        plugin.saveNPC();
+        plugin.ymlManager.getConfig().set("npc." + uuid + ".name", name);
+        plugin.ymlManager.getConfig().set("npc." + uuid + ".locX", x);
+        plugin.ymlManager.getConfig().set("npc." + uuid + ".locY", y);
+        plugin.ymlManager.getConfig().set("npc." + uuid + ".locZ", z);
+        plugin.ymlManager.getConfig().set("npc." + uuid + ".skin", skinName);
+        plugin.ymlManager.saveConfig();
 
         return true;
     }

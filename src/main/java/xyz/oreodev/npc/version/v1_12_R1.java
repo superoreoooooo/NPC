@@ -29,7 +29,6 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -93,8 +92,7 @@ public class v1_12_R1 {
             e.printStackTrace();
         }
 
-        PlayerJoinEvent playerJoinEvent;
-        playerJoinEvent = new PlayerJoinEvent(((CraftServer)Bukkit.getServer()).getPlayer(entityPlayer), joinMessage);
+        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(((CraftServer)Bukkit.getServer()).getPlayer(entityPlayer), joinMessage);
         Bukkit.getPluginManager().callEvent(playerJoinEvent);
 
         String finalJoinMessage = playerJoinEvent.getJoinMessage();
@@ -182,14 +180,14 @@ public class v1_12_R1 {
     public static void removePlayer(NPCPlayer player) {
         MinecraftServer mcServer = ((CraftServer) Bukkit.getServer()).getServer();
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
-        EntityPlayer entityPlayer = (EntityPlayer) player.getEntityPlayer();
+        EntityPlayer entityPlayer = player.getEntityPlayer();
         WorldServer worldServer = entityPlayer.getWorld().getWorld().getHandle();
 
         if (entityPlayer.activeContainer != entityPlayer.defaultContainer) {
             entityPlayer.closeInventory();
         }
 
-        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(craftServer.getPlayer(entityPlayer), entityPlayer.getName() + " left the game (NPC)");
+        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(craftServer.getPlayer(entityPlayer), "");
 
         Bukkit.getPluginManager().callEvent(playerQuitEvent);
 
@@ -244,6 +242,6 @@ public class v1_12_R1 {
     }
 
     private static String getJoinMessage(EntityPlayer entityPlayer) {
-        return entityPlayer.getName() + " joined the game (NPC)";
+        return "";
     }
 }

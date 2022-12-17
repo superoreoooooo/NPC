@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.util.account.account;
 
 public class accountCommand implements CommandExecutor {
@@ -18,69 +19,70 @@ public class accountCommand implements CommandExecutor {
                     break;
                 case "now" :
                     if (sender instanceof Player player) {
-                        player.sendMessage("your balance : " + account.getBalance(player.getName()));
+                        String[] list = {sender.getName(), String.valueOf(account.getBalance(sender.getName()))};
+                        player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.balance-now", list));
                     } else {
-                        sender.sendMessage("player only");
+                        sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.no-player", args));
                     }
                     break;
                 case "send" :
                     if (args.length == 3) {
                         if (sender instanceof Player player) {
                             if (!account.getAccountList().contains(args[1])) {
-                                player.sendMessage("check player name");
+                                player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.wrong-name", args));
                                 return false;
                             }
                             if (account.getBalance(player.getName()) - Integer.parseInt(args[2]) < 0) {
-                                player.sendMessage("you have no balance :( (" + account.getBalance(player.getName()) + ")");
+                                player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.no-balance", args));
                                 return false;
                             }
                             account.addBalance(player.getName(), -1 * Integer.parseInt(args[2]));
                             account.addBalance(args[1], Integer.parseInt(args[2]));
-                            player.sendMessage("money sent to " + args[1] + " (" + args[2] + ")");
+                            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.send", args));
                         } else {
-                            sender.sendMessage("player only");
+                            sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.no-player", args));
                         }
                     }
                     break;
                 case "remove" :
                     if (checkPermission(sender)) {
-                        sender.sendMessage("no permission!");
+                        sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.no-permission", args));
                         return false;
                     }
                     if (args.length == 2) {
-                        sender.sendMessage("removed account : " + args[1] + " | amount : " + account.getBalance(args[1]));
+                        sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.remove", args));
                         account.removeAccount(args[1]);
                     }
                     else Bukkit.dispatchCommand(sender, "account help");
                     break;
                 case "list" :
                     if (checkPermission(sender)) {
-                        sender.sendMessage("no permission!");
+                        sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.no-permission", args));
                         return false;
                     }
                     account.printAllAccountData(sender);
                     break;
                 case "set" :
                     if (checkPermission(sender)) {
-                        sender.sendMessage("no permission!");
+                        sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.no-permission", args));
                         return false;
                     }
                     if (args.length == 3) {
                         account.setBalance(args[1], Integer.parseInt(args[2]));
-                        sender.sendMessage("money set to " + args[1] + " | amount : " + Integer.parseInt(args[2]));
+                        sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.set", args));
                     }
                     else Bukkit.dispatchCommand(sender, "account help");
                     break;
                 case "add" :
                     if (checkPermission(sender)) {
-                        sender.sendMessage("no permission!");
+                        sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.no-permission", args));
                         return false;
                     }
                     if (args.length == 3) {
                         if (account.addBalance(args[1], Integer.parseInt(args[2]))) {
-                            sender.sendMessage("money add to " + args[1] + " | amount : " + Integer.parseInt(args[2]) + " | total : " + account.getBalance(args[1]));
+                            sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.add", args));
                         } else {
-                            sender.sendMessage("error");
+                            sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.wrong-name", args));
                         }
                     }
                     else Bukkit.dispatchCommand(sender, "account help");

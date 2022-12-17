@@ -24,11 +24,13 @@ public class itemCommand implements CommandExecutor {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("remove")) {
                     se.removeItem(player.getItemInHand());
+                    String[] strings = new String[1];
                     if (player.getItemInHand().hasItemMeta()) {
-                        player.sendMessage("item removed : " + player.getItemInHand().getItemMeta().getDisplayName());
+                        strings[0] = player.getItemInHand().getItemMeta().getDisplayName();
                     } else {
-                        player.sendMessage("item removed : " + player.getItemInHand().getType().name());
+                        strings[0] = player.getItemInHand().getType().name();
                     }
+                    player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.item.remove", strings));
                 }
                 if (args[0].equalsIgnoreCase("list")) {
                     se.printList(player);
@@ -37,7 +39,14 @@ public class itemCommand implements CommandExecutor {
             else if (args.length == 2) {
                 if (!args[0].equalsIgnoreCase("set")) return false;
                 se.setItem(player.getItemInHand(), Integer.parseInt(args[1]));
-                player.sendMessage("item added : " + player.getItemInHand().getItemMeta().getDisplayName() + " price : " + plugin.priceDataYmlManager.getConfig().get("item." + player.getItemInHand().getType().toString() + ".name." + player.getItemInHand().getItemMeta().getDisplayName() + ".price"));
+                String[] strings = new String[2];
+                if (player.getItemInHand().hasItemMeta()) {
+                    strings[0] = player.getItemInHand().getItemMeta().getDisplayName();
+                } else {
+                    strings[0] = player.getItemInHand().getType().name();
+                }
+                strings[1] = args[1];
+                player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.item.set", strings));
             }
             else {
                 player.sendMessage("/item set (price) | remove");

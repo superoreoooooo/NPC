@@ -51,14 +51,6 @@ public class shopListener implements Listener {
     }
 
     @EventHandler
-    public void onOpen(InventoryOpenEvent e) {
-        NPCCommand.editorList.forEach(s -> e.getPlayer().sendMessage(s.getName()));
-        if (e.getInventory().getTitle().contains("_상점")) {
-            //e.getPlayer().sendMessage("opened shop : " + e.getInventory().getTitle().split("_")[0]);
-        }
-    }
-
-    @EventHandler
     public void onClick(InventoryClickEvent e) {
         if (NPCCommand.editorList.contains((Player)e.getWhoClicked())) return;
         if (e.getClickedInventory() == null) {
@@ -121,12 +113,7 @@ public class shopListener implements Listener {
                         }
                     }
                 }
-                e.getPlayer().sendMessage("Saved items : (" + cnt + ")");
-                for (String str : items) {
-                    e.getPlayer().sendMessage(str);
-                }
-            } else {
-                e.getPlayer().sendMessage("closed shop : " + storeName[0]);
+                e.getPlayer().sendMessage("Saved items : (" + cnt + ")" + items);
             }
         }
         NPCCommand.editorList.remove((Player)e.getPlayer());

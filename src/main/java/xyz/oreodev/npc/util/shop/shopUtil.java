@@ -77,13 +77,6 @@ public class shopUtil {
         NPCCommand.editorList.add(player);
         UUID key = getIDFromName(name);
         shopInventory shopInventory = new shopInventory(key, getSavedTitle(key), getSavedInventorySize(key));
-        player.sendMessage("UUID  > " + key);
-        player.sendMessage("Title > " + getSavedTitle(key));
-        player.sendMessage("Size  > " + getSavedInventorySize(key));
-        for (int i = 0; i < getSavedInventorySize(key); i++) {
-            if (getSavedItemStack(key, i) == null) continue;
-            player.sendMessage("saved Item " + i + " : " + getSavedItemStack(key, i));
-        }
         player.openInventory(shopInventory.getInventory());
     }
 
@@ -93,31 +86,20 @@ public class shopUtil {
             return;
         }
         UUID key = getIDFromName(name);
-        player.sendMessage("UUID  > " + key.toString());
-        player.sendMessage("Title > " + getSavedTitle(key));
-        player.sendMessage("Size  > " + getSavedInventorySize(key));
-        for (int i = 0; i < getSavedInventorySize(key); i++) {
-            if (getSavedItemStack(key, i) == null) continue;
-            player.sendMessage("removed Item " + i + " : " + getSavedItemStack(key, i));
-        }
         removeInventory(key);
         shopUtil.shopMap.remove(key);
     }
 
     public void createShop(Player player, String name, String size) {
         if (shopMap.containsValue(name)) {
-            player.sendMessage("overlapping names are impossible");
+            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.overlapping-name", new String[]{}));
             return;
         }
         if (Integer.parseInt(size) % 9 != 0) {
-            player.sendMessage("chest size must be multiples of 9");
+            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.multiple-nine", new String[]{}));
             return;
         }
         shopInventory shopInventory = new shopInventory(UUID.randomUUID(), name, Integer.parseInt(size));
-        player.sendMessage("new Shop Created");
-        player.sendMessage("UUID  > " + shopInventory.getInventoryID());
-        player.sendMessage("Title > " + shopInventory.getTitle());
-        player.sendMessage("Size  > " + shopInventory.getSize());
         player.openInventory(shopInventory.getInventory());
         shopMap.put(shopInventory.getInventoryID(), shopInventory.getTitle());
         NPCCommand.editorList.add(player);

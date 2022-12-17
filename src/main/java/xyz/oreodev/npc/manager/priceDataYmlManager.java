@@ -23,11 +23,11 @@ public class priceDataYmlManager {
 
     public void reloadConfig() {
         if (this.configFile == null) {
-            this.configFile = new File(this.plugin.getDataFolder(), "data.yml");
+            this.configFile = new File(this.plugin.getDataFolder(), "itemPriceData.yml");
         }
         this.dataConfig = YamlConfiguration.loadConfiguration(this.configFile);
 
-        InputStream defaultStream = this.plugin.getResource("data.yml");
+        InputStream defaultStream = this.plugin.getResource("itemPriceData.yml");
         if (defaultStream != null) {
             YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
             this.dataConfig.setDefaults(defaultConfig);
@@ -54,10 +54,10 @@ public class priceDataYmlManager {
 
     public void saveDefaultConfig() {
         if (this.configFile == null) {
-            this.configFile = new File(this.plugin.getDataFolder(), "data.yml");
+            this.configFile = new File(this.plugin.getDataFolder(), "itemPriceData.yml");
         }
         if (!(this.configFile.exists())) {
-            this.plugin.saveResource("data.yml", false);
+            this.plugin.saveResource("itemPriceData.yml", false);
         }
     }
 }

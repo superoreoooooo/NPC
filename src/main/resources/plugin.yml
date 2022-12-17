@@ -1,9 +1,19 @@
 name: NPC
 version: '${project.version}'
 main: xyz.oreodev.npc.Main
+author: superoreo
+
 commands:
   item:
+    aliases:
+      - 아이템
   npc:
+    aliases:
+      - shop
+      - 상점
   account:
     aliases:
       - acc
+      - 계좌
+      - money
+      - balance

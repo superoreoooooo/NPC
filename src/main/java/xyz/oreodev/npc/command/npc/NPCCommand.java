@@ -32,7 +32,10 @@ public class NPCCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player player)) return false;
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.no-player", args));
+            return false;
+        }
         if (sender.hasPermission("administrators")) {
             if (args.length == 0) {
                 sender.sendMessage("/npc list | open (name) | tp (name) | add (name) (size) | skin (name) (skinOwner) | remove (name) / (all) | edit (name) | size (name)");
@@ -40,28 +43,34 @@ public class NPCCommand implements CommandExecutor {
                 switch (args[0]) {
                     case "save" :
                         plugin.saveNPC();
+                        player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.save", args));
                         break;
                     case "skin" :
                         if (args.length == 3) {
                             setSkin(player, args[1], args[2]);
+                            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.skin", args));
                         }
                         break;
                     case "tp" :
                         if (args.length == 2) {
                             teleport(player, args[1]);
+                            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.tp-player", args));
                         }
                         if (args.length == 5) {
                             if (args[3].equals("~")) teleport(player, args[1], Double.parseDouble(args[2]), player.getLocation().getY(), Double.parseDouble(args[4]));
                             else teleport(player, args[1], Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
+                            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.tp-location", args));
                         }
                         break;
                     case "add" :
                         if (args.length == 2) {
                             summon(player, args[1]);
                             util.createShop(player, args[1], "9");
+                            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.add-default", args));
                         } else if (args.length == 3) {
                             summon(player, args[1]);
                             util.createShop(player, args[1], args[2]);
+                            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.add-modified", args));
                         }
                         else {
                             Bukkit.dispatchCommand(player, "npc");
@@ -71,6 +80,7 @@ public class NPCCommand implements CommandExecutor {
                         if (args.length == 3) {
                             if (Integer.parseInt(args[2]) % 9 != 0) return false;
                             util.saveInventorySize(util.getIDFromName(args[1]), Integer.parseInt(args[2]));
+                            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.size", args));
                         } else {
                             Bukkit.dispatchCommand(player, "npc");
                         }
@@ -79,6 +89,7 @@ public class NPCCommand implements CommandExecutor {
                         if (args.length == 2) {
                             remove(player, args[1]);
                             util.removeShop(player, args[1]);
+                            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.remove", args));
                         } else {
                             Bukkit.dispatchCommand(player, "npc");
                         }
@@ -93,11 +104,13 @@ public class NPCCommand implements CommandExecutor {
                     case "open" :
                         if (args.length == 2) {
                             util.openShop(player, args[1]);
+                            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.open", args));
                         }
                         break;
                     case "edit" :
                         if (args.length == 2) {
                             util.editShop(player, args[1]);
+                            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.edit", args));
                         }
                         break;
                     default:
@@ -107,7 +120,7 @@ public class NPCCommand implements CommandExecutor {
             }
         }
         else {
-            sender.sendMessage("no permissions!");
+            sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.no-permission", args));
         }
         return false;
     }
@@ -175,43 +188,13 @@ public class NPCCommand implements CommandExecutor {
     }
 
     private void list(CommandSender sender) {
-        sender.sendMessage("Npc (" + NPCPlayer.getAmount() + "):");
-
-        StringBuilder list = new StringBuilder();
-
-        for (NPCPlayer player : NPCPlayer.getNPCPlayerList()) {
-            list.append(Color.format(player.getName() + ", "));
+        sender.sendMessage("========================================");
+        String[] args = new String[1];
+        for (NPCPlayer player : NPCPlayer.npcPlayerList) {
+            args[0] = player.getName();
+            sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.list", args));
         }
+        sender.sendMessage("========================================");
 
-        if (list.length() >= 3) {
-            list = new StringBuilder(list.substring(0, list.length() - 2));
-
-            String[] lists = new String[(int) Math.ceil((double) list.length() / 48.0d)];
-
-            int cuts = 0;
-            int lastCut = 0;
-            StringBuilder listToAdd = new StringBuilder();
-            for (int i = 0; i < list.length(); i++) {
-                char c = list.charAt(i);
-
-                if (c == ',' && i - lastCut >= 48) {
-                    lastCut = i;
-                    lists[cuts] = listToAdd.toString();
-                    cuts++;
-                    listToAdd = new StringBuilder();
-                    i++;
-                    continue;
-                }
-                listToAdd.append(c);
-            }
-
-            if (!listToAdd.toString().equals("")) {
-                lists[cuts] = listToAdd.toString();
-            }
-
-            for (String s : lists) {
-                sender.sendMessage(s);
-            }
-        }
     }
 }
