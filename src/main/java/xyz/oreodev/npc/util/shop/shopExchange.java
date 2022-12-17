@@ -53,7 +53,7 @@ public class shopExchange {
         for (String itemType : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
             if (itemType.equals(itemStack.getType().name())) {
                 for (String itemName : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item." + itemType + ".name.").getKeys(false)) {
-                    if (!itemStack.hasItemMeta()) {
+                    if (!itemStack.getItemMeta().hasDisplayName()) {
                         int price = plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price");
                         acc.addBalance(player.getName(), price);
                         player.sendMessage("sold item : " + itemStack.getType().name() + " for " + price);
@@ -77,20 +77,19 @@ public class shopExchange {
         for (String itemType : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
             if (itemType.equals(itemStack.getType().name())) {
                 for (String itemName : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item." + itemType + ".name.").getKeys(false)) {
-                    if (!itemStack.hasItemMeta()) {
+                    if (!itemStack.getItemMeta().hasDisplayName()){
                         int price = plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price");
                         if (!acc.addBalance(player.getName(), -1 * price)) {
                             player.sendMessage("you have no money :( (balance left : " + acc.getBalance(player.getName()) + ")");
                             return;
                         }
-                        player.sendMessage("bought item : " + itemStack.getType().name() + " for " + price);
+                        player.sendMessage("bought item : " + itemStack.getType().name() + " price : " + price);
                         player.sendMessage("balance left : " + acc.getBalance(player.getName()));
                         ItemStack clone = itemStack.clone();
                         clone.setAmount(1);
                         player.getInventory().addItem(clone);
                         return;
-                    }
-                    else if (itemName.equals(itemStack.getItemMeta().getDisplayName())) {
+                    } else if (itemName.equals(itemStack.getItemMeta().getDisplayName())) {
                         int price = plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price");
                         if (!acc.addBalance(player.getName(), -1 * price)) {
                             player.sendMessage("you have no money :( (balance left : " + acc.getBalance(player.getName()) + ")");

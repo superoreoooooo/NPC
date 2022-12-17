@@ -3,9 +3,13 @@ package xyz.oreodev.npc.util.shop;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class shopInventory implements InventoryHolder {
@@ -28,7 +32,17 @@ public class shopInventory implements InventoryHolder {
     private void init() {
         inv = Bukkit.createInventory(this, getSize(), getTitle() + "_상점");
         for (int i = 0; i < getSize(); i++) {
-            inv.setItem(i, plugin.shopYmlManager.getConfig().getItemStack("shop." + InventoryID.toString() + ".inventory." + i));
+            ItemStack itemStack = plugin.shopYmlManager.getConfig().getItemStack("shop." + InventoryID.toString() + ".inventory." + i);
+            if (itemStack != null) {
+                ItemMeta itemMeta = itemStack.getItemMeta();
+                List<String> lore = new ArrayList<>();
+                lore.add("");
+                lore.add("price : " + plugin.priceDataYmlManager.getConfig().getInt("item." + itemStack.getType().name() + ".name." + itemMeta.getDisplayName() + ".price"));
+                lore.add("");
+                itemMeta.setLore(lore);
+                itemStack.setItemMeta(itemMeta);
+            }
+            inv.setItem(i, itemStack);
         }
         saveInventory();
     }

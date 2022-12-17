@@ -67,7 +67,6 @@ public class shopUtil {
         UUID key = getIDFromName(name);
         shopInventory shopInventory = new shopInventory(key, getSavedTitle(key), getSavedInventorySize(key));
         player.openInventory(shopInventory.getInventory());
-        shopListener.shopList.add(shopInventory.getInventory());
     }
 
     public void editShop(Player player, String name) {

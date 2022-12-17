@@ -177,8 +177,6 @@ public class NPCCommand implements CommandExecutor {
     private void list(CommandSender sender) {
         sender.sendMessage("Npc (" + NPCPlayer.getAmount() + "):");
 
-        shopListener.shopList.forEach(i -> sender.sendMessage(i.getName() + " " + i.getTitle()));
-
         StringBuilder list = new StringBuilder();
 
         for (NPCPlayer player : NPCPlayer.getNPCPlayerList()) {

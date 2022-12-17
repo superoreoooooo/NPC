@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oreodev.npc.Main;
 import xyz.oreodev.npc.command.npc.NPCCommand;
@@ -27,7 +26,6 @@ public class shopListener implements Listener {
     private shopExchange shopExchange;
 
     List<Player> coolDown = new ArrayList<>();
-    public static List<Inventory> shopList = new ArrayList<>();
 
     public shopListener() {
         this.shopExchange = new shopExchange();
@@ -54,8 +52,10 @@ public class shopListener implements Listener {
 
     @EventHandler
     public void onOpen(InventoryOpenEvent e) {
-        if (NPCCommand.editorList.contains((Player)e.getPlayer())) return;
-        if (shopList.contains(e.getInventory())) e.getPlayer().sendMessage("opened shop : " + e.getInventory().getTitle().split("_")[0]);
+        NPCCommand.editorList.forEach(s -> e.getPlayer().sendMessage(s.getName()));
+        if (e.getInventory().getTitle().contains("_상점")) {
+            //e.getPlayer().sendMessage("opened shop : " + e.getInventory().getTitle().split("_")[0]);
+        }
     }
 
     @EventHandler
@@ -64,13 +64,13 @@ public class shopListener implements Listener {
         if (e.getClickedInventory() == null) {
             return;
         }
-        if (shopList.contains(e.getClickedInventory())) {
+        if (e.getClickedInventory().getTitle().contains("_상점")) {
             e.setCancelled(true);
             if (coolDown.contains((Player)e.getWhoClicked())) return;
             delay((Player)e.getWhoClicked());
             shopExchange.buyItem((Player)e.getWhoClicked(), e.getCurrentItem());
         }
-        else if (shopList.contains(e.getInventory())) {
+        else if (e.getInventory().getTitle().contains("_상점")) {
             e.setCancelled(true);
             if (coolDown.contains((Player)e.getWhoClicked())) return;
             delay((Player)e.getWhoClicked());
@@ -82,7 +82,7 @@ public class shopListener implements Listener {
     @EventHandler
     public void onDrag(InventoryDragEvent e) {
         if (NPCCommand.editorList.contains((Player)e.getWhoClicked())) return;
-        if (shopList.contains(e.getInventory())) {
+        if (e.getInventory().getTitle().contains("_상점")) {
             if (util.getSavedInventorySize(util.getIDFromName(e.getInventory().getTitle().split("_")[0])) > Collections.min(e.getRawSlots())) {
                 e.setCancelled(true);
             }
@@ -101,7 +101,7 @@ public class shopListener implements Listener {
 
     @EventHandler
     public void onClose(InventoryCloseEvent e) {
-        if (shopList.contains(e.getInventory())) {
+        if (e.getInventory().getTitle().contains("_상점")) {
             String[] storeName = e.getInventory().getTitle().split("_");
             if (NPCCommand.editorList.contains((Player)e.getPlayer())) {
                 int cnt = 0;
@@ -126,10 +126,9 @@ public class shopListener implements Listener {
                     e.getPlayer().sendMessage(str);
                 }
             } else {
-                //e.getPlayer().sendMessage("closed shop : " + storeName[0]);
+                e.getPlayer().sendMessage("closed shop : " + storeName[0]);
             }
         }
         NPCCommand.editorList.remove((Player)e.getPlayer());
-        shopList.remove(e.getInventory());
     }
 }
