@@ -1,6 +1,6 @@
 name: NPC
 version: '${project.version}'
-main: xyz.oreodev.npc.Main
+main: win.oreo.npc.Main
 author: superoreo
 
 commands:
