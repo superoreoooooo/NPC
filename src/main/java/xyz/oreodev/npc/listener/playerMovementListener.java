@@ -2,7 +2,6 @@ package xyz.oreodev.npc.listener;
 
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,7 +11,6 @@ import xyz.oreodev.npc.Main;
 public class playerMovementListener implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
-        if (e.getPlayer().getItemInHand().getType().equals(Material.DIAMOND_SWORD)) return;
         Main.npcs.stream().forEach(npc -> {
             Location playerLoc = e.getPlayer().getLocation();
             Location location = npc.getBukkitEntity().getLocation();

@@ -13,7 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -106,8 +105,8 @@ public class v1_12_R1 {
         PlayerResourcePackStatusEvent resourcePackStatusEventAccepted = new PlayerResourcePackStatusEvent(bukkitPlayer, PlayerResourcePackStatusEvent.Status.ACCEPTED);
         PlayerResourcePackStatusEvent resourcePackStatusEventSuccessFullyLoaded = new PlayerResourcePackStatusEvent(bukkitPlayer, PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED);
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> Bukkit.getPluginManager().callEvent(resourcePackStatusEventAccepted), 20);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> Bukkit.getPluginManager().callEvent(resourcePackStatusEventSuccessFullyLoaded), 40);
+        Bukkit.getScheduler().scheduleAsyncDelayedTask(Main.getPlugin(), () -> Bukkit.getPluginManager().callEvent(resourcePackStatusEventAccepted), 20);
+        Bukkit.getScheduler().scheduleAsyncDelayedTask(Main.getPlugin(), () -> Bukkit.getPluginManager().callEvent(resourcePackStatusEventSuccessFullyLoaded), 40);
 
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -130,7 +129,7 @@ public class v1_12_R1 {
         return entityPlayer;
     }
 
-    public static String[] getSkinData(String skinOwner) {
+    public static String[] getSkinData(String skinOwner) { //TODO 스킨 데이터 저장했다가 불러오는식으로 변경하기 (현재 개느려터짐)
         String[] str = new String[2];
 
         if (getUUID(skinOwner) == null) {
@@ -172,7 +171,6 @@ public class v1_12_R1 {
         String texture = getSkinData(skinName)[0];
         String signature = getSkinData(skinName)[1];
         gameProfile.getProperties().put("textures", new Property("textures", texture, signature));
-        //todo 닉네임으로 스킨 불러와서 넣어주기
 
         return new EntityPlayer(mcServer, worldServer, gameProfile, new PlayerInteractManager(worldServer));
     }

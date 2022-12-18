@@ -94,7 +94,7 @@ public class shopExchange {
                             player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.no-balance", args));
                             return;
                         }
-                        args[0] = itemStack.getItemMeta().getDisplayName();
+                        args[0] = itemStack.getType().name();
                         args[1] = String.valueOf(price);
                         player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.buy", args));
                         ItemStack clone = itemStack.clone();
