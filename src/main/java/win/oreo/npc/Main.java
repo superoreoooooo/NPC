@@ -6,13 +6,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import win.oreo.npc.listener.accountListener;
+import win.oreo.npc.listener.account.accountListener;
 import win.oreo.npc.listener.shop.shopListener;
 import win.oreo.npc.manager.accountYmlManager;
 import win.oreo.npc.manager.priceDataYmlManager;
 import win.oreo.npc.manager.shopYmlManager;
 import win.oreo.npc.util.account.account;
+import win.oreo.npc.util.item.itemUtil;
 import win.oreo.npc.util.npc.NPCPlayer;
 import win.oreo.npc.command.account.accountCompleter;
 import win.oreo.npc.command.item.itemCompleter;
@@ -20,9 +22,9 @@ import win.oreo.npc.command.npc.NPCCommand;
 import win.oreo.npc.command.npc.NPCCompleter;
 import win.oreo.npc.command.account.accountCommand;
 import win.oreo.npc.command.item.itemCommand;
-import win.oreo.npc.listener.DeathListener;
-import win.oreo.npc.listener.PreLoginListener;
-import win.oreo.npc.listener.playerMovementListener;
+import win.oreo.npc.listener.npc.DeathListener;
+import win.oreo.npc.listener.npc.PreLoginListener;
+import win.oreo.npc.listener.npc.playerMovementListener;
 import win.oreo.npc.manager.npcYmlManager;
 import win.oreo.npc.util.npc.Color;
 import win.oreo.npc.util.shop.shopUtil;
@@ -45,6 +47,7 @@ public final class Main extends JavaPlugin {
     private boolean updatedPaper = false;
 
     private account acc;
+    private itemUtil itemUtil;
 
     private NPCPlayer npcPlayer;
 
@@ -108,6 +111,7 @@ public final class Main extends JavaPlugin {
         plugin = this;
 
         this.acc = new account();
+        this.itemUtil = new itemUtil();
 
         checkForClasses();
 
@@ -121,6 +125,7 @@ public final class Main extends JavaPlugin {
         initializeAccount();
         initializeNPC();
         initializeShop();
+        initializePrice();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.spigot().setCollidesWithEntities(false);
@@ -134,6 +139,17 @@ public final class Main extends JavaPlugin {
         for (NPCPlayer player : list) {
             player.removePlayer();
         }
+        itemUtil.savePriceData();
+    }
+
+    public void initializePrice() {
+        for (String name : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
+            itemUtil.priceMap.put(plugin.priceDataYmlManager.getConfig().getItemStack("item." + name + ".itemStack"), plugin.priceDataYmlManager.getConfig().getInt("item." + name + ".price"));
+        }
+        for (ItemStack itemStack : itemUtil.priceMap.keySet()) {
+            Bukkit.getConsoleSender().sendMessage("itemStack : " + itemStack + " name : " + itemUtil.getItemName(itemStack) + " price : " + itemUtil.priceMap.get(itemStack));
+        }
+        Bukkit.getConsoleSender().sendMessage("load complete!");
     }
 
     public void initializeNPC() {

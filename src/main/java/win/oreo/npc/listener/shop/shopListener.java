@@ -34,7 +34,7 @@ public class shopListener implements Listener {
 
     public void delay(Player player) {
         coolDown.add(player);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(JavaPlugin.getPlugin(Main.class), () -> coolDown.remove(player), 5);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(JavaPlugin.getPlugin(Main.class), () -> coolDown.remove(player), 10);
     }
 
     @EventHandler
@@ -92,29 +92,28 @@ public class shopListener implements Listener {
 
     @EventHandler
     public void onClose(InventoryCloseEvent e) {
+        if (!NPCCommand.editorList.contains((Player)e.getPlayer())) return;
+        NPCCommand.editorList.remove((Player)e.getPlayer());
         if (e.getInventory().getTitle().contains("_상점")) {
             String[] storeName = e.getInventory().getTitle().split("_");
-            if (NPCCommand.editorList.contains((Player)e.getPlayer())) {
-                int cnt = 0;
-                List<String> items = new ArrayList<>();
-                for (String str : shopUtil.shopMap.values()) {
-                    if (str.equalsIgnoreCase(storeName[0])) {
-                        for (UUID uuid : shopUtil.shopMap.keySet()) {
-                            if (shopUtil.shopMap.get(uuid).equalsIgnoreCase(storeName[0])) {
-                                for (int i = 0; i < e.getInventory().getSize(); i++) {
-                                    util.saveItemStack(uuid, i, e.getInventory().getItem(i));
-                                    if (e.getInventory().getItem(i) != null) {
-                                        items.add(e.getInventory().getItem(i).getType().name());
-                                        cnt++;
-                                    }
+            int cnt = 0;
+            List<String> items = new ArrayList<>();
+            for (String str : shopUtil.shopMap.values()) {
+                if (str.equalsIgnoreCase(storeName[0])) {
+                    for (UUID uuid : shopUtil.shopMap.keySet()) {
+                        if (shopUtil.shopMap.get(uuid).equalsIgnoreCase(storeName[0])) {
+                            for (int i = 0; i < e.getInventory().getSize(); i++) {
+                                util.saveItemStack(uuid, i, e.getInventory().getItem(i));
+                                if (e.getInventory().getItem(i) != null) {
+                                    items.add(e.getInventory().getItem(i).getType().name());
+                                    cnt++;
                                 }
                             }
                         }
                     }
                 }
-                e.getPlayer().sendMessage("Saved items : (" + cnt + ")" + items);
             }
+            e.getPlayer().sendMessage("Saved items : (" + cnt + ")" + items);
         }
-        NPCCommand.editorList.remove((Player)e.getPlayer());
     }
 }

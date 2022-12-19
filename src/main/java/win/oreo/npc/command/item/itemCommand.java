@@ -1,71 +1,65 @@
 package win.oreo.npc.command.item;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import win.oreo.npc.Main;
-import win.oreo.npc.util.shop.shopExchange;
+import win.oreo.npc.util.item.itemUtil;
 
 public class itemCommand implements CommandExecutor {
-    private shopExchange se;
-    private Main plugin;
+    private itemUtil util;
 
     public itemCommand() {
-        this.se = new shopExchange();
-        this.plugin = JavaPlugin.getPlugin(Main.class);
+        this.util = new itemUtil();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player player) {
-            if (player.getItemInHand() == null) return false;
+            if (player.getInventory().getItemInMainHand() == null || player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) return false;
+            if (checkPermission(sender)) {
+                sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.no-permission", args));
+                return false;
+            }
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("remove")) {
-                    se.removeItem(player.getItemInHand());
+                    util.removePrice(player.getInventory().getItemInMainHand());
                     String[] strings = new String[1];
-                    if (player.getItemInHand().hasItemMeta()) {
-                        strings[0] = player.getItemInHand().getItemMeta().getDisplayName();
-                    } else {
-                        strings[0] = player.getItemInHand().getType().name();
-                    }
+                    strings[0] = itemUtil.getItemName(player.getInventory().getItemInMainHand());
                     player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.item.remove", strings));
                 }
                 if (args[0].equalsIgnoreCase("list")) {
-                    se.printList(player);
+                    util.printList(player);
                 }
                 if (args[0].equalsIgnoreCase("g")) {
-                    se.exitem(player);
+                    util.testItem(player);
+                }
+                if (args[0].equalsIgnoreCase("save")) {
+                    util.savePriceData();
                 }
             }
             else if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("set")) {
+                    util.setPrice(player.getInventory().getItemInMainHand(), Integer.parseInt(args[1]));
                     String[] strings = new String[2];
-                    if (plugin.priceDataYmlManager.getConfig().getConfigurationSection("item." + player.getItemInHand().getType().name() + ".name") != null && plugin.priceDataYmlManager.getConfig().getConfigurationSection("item." + player.getItemInHand().getType().name() + ".name").getKeys(false).contains(player.getItemInHand().getItemMeta().getDisplayName())) {
-                        if (player.getItemInHand().hasItemMeta()) {
-                            strings[0] = player.getItemInHand().getItemMeta().getDisplayName();
-                        } else {
-                            strings[0] = player.getItemInHand().getType().name();
-                        }
-                        player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.item.error-overlap", strings));
-                        return false;
-                    }
-                    se.setItem(player.getItemInHand(), Integer.parseInt(args[1]));
-
-                    if (player.getItemInHand().hasItemMeta()) {
-                        strings[0] = player.getItemInHand().getItemMeta().getDisplayName();
-                    } else {
-                        strings[0] = player.getItemInHand().getType().name();
-                    }
+                    strings[0] = itemUtil.getItemName(player.getInventory().getItemInMainHand());
                     strings[1] = args[1];
                     player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.item.set", strings));
                 }
+                if (args[0].equalsIgnoreCase("give")) {
+                    player.getInventory().addItem(util.getItemStack(args[1]));
+                }
             }
             else {
-                player.sendMessage("/item set (price) | remove");
+                player.sendMessage("wrong command");
             }
         }
         return false;
+    }
+
+    public boolean checkPermission(CommandSender sender) {
+        return !sender.hasPermission("administrators");
     }
 }

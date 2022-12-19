@@ -1,4 +1,4 @@
-package win.oreo.npc.listener;
+package win.oreo.npc.listener.npc;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

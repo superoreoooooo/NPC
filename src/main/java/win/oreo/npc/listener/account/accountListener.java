@@ -1,4 +1,4 @@
-package win.oreo.npc.listener;
+package win.oreo.npc.listener.account;
 
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.Bukkit;

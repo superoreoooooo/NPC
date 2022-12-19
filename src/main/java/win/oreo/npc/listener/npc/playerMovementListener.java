@@ -1,4 +1,4 @@
-package win.oreo.npc.listener;
+package win.oreo.npc.listener.npc;
 
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Location;

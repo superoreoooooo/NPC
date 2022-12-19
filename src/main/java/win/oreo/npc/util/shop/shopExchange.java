@@ -1,17 +1,10 @@
 package win.oreo.npc.util.shop;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import win.oreo.npc.Main;
 import win.oreo.npc.util.account.account;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class shopExchange {
     private account acc;
@@ -22,82 +15,52 @@ public class shopExchange {
         this.plugin = JavaPlugin.getPlugin(Main.class);
     }
 
-    public void printList(Player player) {
-        String[] args = new String[3];
-        for (String itemType : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
-            for (String itemName : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item." + itemType + ".name.").getKeys(false)) {
-                args[0] = itemName;
-                args[1] = itemType;
-                args[2] = String.valueOf(plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price"));
-                player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.list", args));
-            }
-        }
-    }
-
-    public void exitem(Player player) {
-        ItemStack item = new ItemStack(Material.GOLD_AXE);
-        ItemMeta meta = item.getItemMeta();
-        List<String> lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatColor.GOLD + "테스트");
-        lore.add("");
-        meta.setLore(lore);
-        meta.setDisplayName("테스트");
-        meta.addEnchant(Enchantment.SILK_TOUCH, 5, true);
-        item.setItemMeta(meta);
-        player.getInventory().addItem(item);
-    }
-
-    public void setItem(ItemStack itemStack, int price) {
-        plugin.priceDataYmlManager.getConfig().set("item." + itemStack.getType().name() + ".name." + itemStack.getItemMeta().getDisplayName() + ".price", price);
-        plugin.priceDataYmlManager.getConfig().set("item." + itemStack.getType().name() + ".name." + itemStack.getItemMeta().getDisplayName() + ".itemStack", itemStack);
-        plugin.priceDataYmlManager.saveConfig();
-    }
-
-    public void removeItem(ItemStack itemStack) {
-        for (String itemType : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
-            if (itemType.equals(itemStack.getType().name())) {
-                for (String itemName : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item." + itemType + ".name.").getKeys(false)) {
-                    if (!itemStack.hasItemMeta()) {
-                        plugin.priceDataYmlManager.getConfig().set("item." + itemType + ".name." + itemName, null);
-                        plugin.priceDataYmlManager.saveConfig();
-                        return;
-                    }
-                    else if (!itemStack.getItemMeta().hasDisplayName()) {
-                        plugin.priceDataYmlManager.getConfig().set("item." + itemType + ".name." + itemName, null);
-                        plugin.priceDataYmlManager.saveConfig();
-                        return;
-                    }
-                    else if (itemName.equals(itemStack.getItemMeta().getDisplayName())) {
-                        plugin.priceDataYmlManager.getConfig().set("item." + itemType + ".name." + itemName, null);
-                        plugin.priceDataYmlManager.saveConfig();
-                    }
-                }
-            }
-        }
-    }
-
     public void sellItem(Player player, ItemStack itemStack) {
         String[] args = new String[2];
         for (String itemType : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
             if (itemType.equals(itemStack.getType().name())) {
                 for (String itemName : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item." + itemType + ".name.").getKeys(false)) {
-                    if (!itemStack.getItemMeta().hasDisplayName()) {
+                    args[0] = itemStack.getType().name();
+                    if (!itemStack.hasItemMeta()) {
                         int price = plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price");
-                        acc.addBalance(player.getName(), price);
                         args[0] = itemStack.getType().name();
                         args[1] = String.valueOf(price);
+                        ItemStack itemStack1 = plugin.priceDataYmlManager.getConfig().getItemStack("item." + itemType + ".name." + itemName + ".itemStack");
+                        if (itemStack1.getAmount() > itemStack.getAmount()) {
+                            player.sendMessage("개수 부족");
+                            return;
+                        }
+                        itemStack.setAmount(itemStack.getAmount() - itemStack1.getAmount());
+                        acc.addBalance(player.getName(), price);
                         player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.sell", args));
-                        itemStack.setAmount(itemStack.getAmount() - 1);
+                        return;
+                    }
+                    else if (!itemStack.getItemMeta().hasDisplayName()) {
+                        int price = plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price");
+                        args[0] = itemStack.getType().name();
+                        args[1] = String.valueOf(price);
+                        ItemStack itemStack1 = plugin.priceDataYmlManager.getConfig().getItemStack("item." + itemType + ".name." + itemName + ".itemStack");
+                        if (itemStack1.getAmount() > itemStack.getAmount()) {
+                            player.sendMessage("개수 부족");
+                            return;
+                        }
+                        itemStack.setAmount(itemStack.getAmount() - itemStack1.getAmount());
+                        acc.addBalance(player.getName(), price);
+                        player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.sell", args));
                         return;
                     }
                     else if (itemName.equals(itemStack.getItemMeta().getDisplayName())) {
                         int price = plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price");
-                        acc.addBalance(player.getName(), price);
                         args[0] = itemStack.getItemMeta().getDisplayName();
                         args[1] = String.valueOf(price);
+                        ItemStack itemStack1 = plugin.priceDataYmlManager.getConfig().getItemStack("item." + itemType + ".name." + itemName + ".itemStack");
+                        if (itemStack1.getAmount() > itemStack.getAmount()) {
+                            player.sendMessage("개수 부족");
+                            return;
+                        }
+                        itemStack.setAmount(itemStack.getAmount() - itemStack1.getAmount());
+                        acc.addBalance(player.getName(), price);
                         player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.sell", args));
-                        itemStack.setAmount(itemStack.getAmount() - 1);
                     }
                 }
             }
@@ -109,6 +72,7 @@ public class shopExchange {
         for (String itemType : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
             if (itemType.equals(itemStack.getType().name())) {
                 for (String itemName : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item." + itemType + ".name.").getKeys(false)) {
+                    player.sendMessage(itemName);
                     if (!itemStack.getItemMeta().hasDisplayName()){
                         int price = plugin.priceDataYmlManager.getConfig().getInt("item." + itemType + ".name." + itemName + ".price");
                         if (!acc.addBalance(player.getName(), -1 * price)) {

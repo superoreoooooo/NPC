@@ -32,7 +32,7 @@ public class shopInventory implements InventoryHolder {
     private void init() {
         inv = Bukkit.createInventory(this, getSize(), getTitle() + "_상점");
         for (int i = 0; i < getSize(); i++) {
-            ItemStack itemStack = plugin.shopYmlManager.getConfig().getItemStack("shop." + InventoryID.toString() + ".inventory." + i);
+            ItemStack itemStack = util.getSavedItemStack(InventoryID, i);
             if (itemStack != null) {
                 ItemMeta itemMeta = itemStack.getItemMeta();
                 List<String> lore = new ArrayList<>();
