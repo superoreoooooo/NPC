@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import win.oreo.npc.Main;
+import win.oreo.npc.util.item.itemUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ public class shopInventory implements InventoryHolder {
     private UUID InventoryID;
     private final Main plugin;
     private shopUtil util;
+    private itemUtil itemUtil;
     private String title;
     private int size;
 
@@ -26,6 +28,7 @@ public class shopInventory implements InventoryHolder {
         this.size = size;
         this.plugin = JavaPlugin.getPlugin(Main.class);
         this.util = new shopUtil();
+        this.itemUtil = new itemUtil();
         this.init();
     }
 
@@ -35,10 +38,20 @@ public class shopInventory implements InventoryHolder {
             ItemStack itemStack = util.getSavedItemStack(InventoryID, i);
             if (itemStack != null) {
                 ItemMeta itemMeta = itemStack.getItemMeta();
+                if (itemMeta.hasLore()) {
+                    for (String str : itemMeta.getLore()) {
+                        if (str.contains("원")) {
+                            itemMeta.getLore().remove(0);
+                        }
+                    }
+                }
                 List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add("price : " + plugin.priceDataYmlManager.getConfig().getInt("item." + itemStack.getType().name() + ".name." + itemMeta.getDisplayName() + ".price"));
-                lore.add("");
+                lore.add(itemUtil.getPriceByName(win.oreo.npc.util.item.itemUtil.getItemName(itemStack)) + "원");
+                if (itemMeta.hasLore()) {
+                    for (String str : itemMeta.getLore()) {
+                        if (!str.contains("원")) lore.add(str);
+                    }
+                }
                 itemMeta.setLore(lore);
                 itemStack.setItemMeta(itemMeta);
             }

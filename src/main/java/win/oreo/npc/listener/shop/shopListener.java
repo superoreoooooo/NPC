@@ -60,13 +60,13 @@ public class shopListener implements Listener {
             e.setCancelled(true);
             if (coolDown.contains((Player)e.getWhoClicked())) return;
             delay((Player)e.getWhoClicked());
-            shopExchange.buyItem((Player)e.getWhoClicked(), e.getCurrentItem());
+            shopExchange.buy((Player)e.getWhoClicked(), e.getCurrentItem());
         }
         else if (e.getInventory().getTitle().contains("_상점")) {
             e.setCancelled(true);
             if (coolDown.contains((Player)e.getWhoClicked())) return;
             delay((Player)e.getWhoClicked());
-            shopExchange.sellItem((Player) e.getWhoClicked(), e.getCurrentItem());
+            shopExchange.sell((Player) e.getWhoClicked(), e.getCurrentItem());
         }
         //e.getWhoClicked().sendMessage(e.getClickedInventory().getName() + " // " + e.getClick().toString() + " // " + e.getCurrentItem().getType().toString() + " // " + e.getCursor().getType().toString() + " // " + e.getAction().toString());
     }

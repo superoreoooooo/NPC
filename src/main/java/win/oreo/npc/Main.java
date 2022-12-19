@@ -3,6 +3,7 @@ package win.oreo.npc;
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import win.oreo.npc.manager.accountYmlManager;
 import win.oreo.npc.manager.priceDataYmlManager;
 import win.oreo.npc.manager.shopYmlManager;
 import win.oreo.npc.util.account.account;
+import win.oreo.npc.util.item.CustomEnchantment;
 import win.oreo.npc.util.item.itemUtil;
 import win.oreo.npc.util.npc.NPCPlayer;
 import win.oreo.npc.command.account.accountCompleter;
@@ -127,6 +129,8 @@ public final class Main extends JavaPlugin {
         initializeShop();
         initializePrice();
 
+        CustomEnchantment.register();
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.spigot().setCollidesWithEntities(false);
         }
@@ -144,10 +148,11 @@ public final class Main extends JavaPlugin {
 
     public void initializePrice() {
         for (String name : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
-            itemUtil.priceMap.put(plugin.priceDataYmlManager.getConfig().getItemStack("item." + name + ".itemStack"), plugin.priceDataYmlManager.getConfig().getInt("item." + name + ".price"));
+            if (plugin.priceDataYmlManager.getConfig().getItemStack("item." + name + ".itemStack").getType().equals(Material.AIR)) continue;
+            win.oreo.npc.util.item.itemUtil.priceMap.put(plugin.priceDataYmlManager.getConfig().getItemStack("item." + name + ".itemStack"), plugin.priceDataYmlManager.getConfig().getInt("item." + name + ".price"));
         }
-        for (ItemStack itemStack : itemUtil.priceMap.keySet()) {
-            Bukkit.getConsoleSender().sendMessage("itemStack : " + itemStack + " name : " + itemUtil.getItemName(itemStack) + " price : " + itemUtil.priceMap.get(itemStack));
+        for (ItemStack itemStack : win.oreo.npc.util.item.itemUtil.priceMap.keySet()) {
+            Bukkit.getConsoleSender().sendMessage("itemStack : " + itemStack + " name : " + win.oreo.npc.util.item.itemUtil.getItemName(itemStack) + " price : " + win.oreo.npc.util.item.itemUtil.priceMap.get(itemStack));
         }
         Bukkit.getConsoleSender().sendMessage("load complete!");
     }

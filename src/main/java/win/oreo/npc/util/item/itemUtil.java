@@ -46,21 +46,28 @@ public class itemUtil {
     }
 
     public void setPrice(ItemStack itemStack, int price) {
-        priceMap.put(itemStack, price);
         plugin.priceDataYmlManager.getConfig().set("item." + getItemName(itemStack) + ".itemStack", itemStack);
         plugin.priceDataYmlManager.getConfig().set("item." + getItemName(itemStack) + ".price", price);
         plugin.priceDataYmlManager.saveConfig();
+
+        priceMap.put(itemStack, price);
+    }
+
+    public int getPriceByName(String name) {
+        return getPrice(getItemStack(name));
     }
 
     public int getPrice(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType().equals(Material.AIR) || priceMap.get(itemStack) == null) return -1;
         return priceMap.get(itemStack);
     }
 
     public void removePrice(ItemStack itemStack) {
         if (priceMap.containsKey(itemStack)) {
-            priceMap.remove(itemStack);
             plugin.priceDataYmlManager.getConfig().set("item." + getItemName(itemStack), null);
             plugin.priceDataYmlManager.saveConfig();
+
+            priceMap.remove(itemStack);
         }
     }
 
@@ -76,6 +83,7 @@ public class itemUtil {
         meta.addEnchant(Enchantment.SILK_TOUCH, 5, true);
         item.setItemMeta(meta);
         player.getInventory().addItem(item);
+        player.sendMessage("asdfasdasdfsdaasdffasd");
     }
 
     public ItemStack getItemStack(String name) {

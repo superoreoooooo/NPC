@@ -33,7 +33,7 @@ public class itemCommand implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("list")) {
                     util.printList(player);
                 }
-                if (args[0].equalsIgnoreCase("g")) {
+                if (args[0].equalsIgnoreCase("test")) {
                     util.testItem(player);
                 }
                 if (args[0].equalsIgnoreCase("save")) {
