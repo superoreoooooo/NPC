@@ -46,6 +46,16 @@ public class itemUtil {
     }
 
     public void setPrice(ItemStack itemStack, int price) {
+        List<String> names = new ArrayList<>();
+        priceMap.keySet().forEach(s -> names.add(getItemName(s)));
+        for (String itemName : names) {
+            if (getItemName(itemStack).equalsIgnoreCase(itemName)) {
+                priceMap.remove(getItemStack(itemName));
+                plugin.priceDataYmlManager.getConfig().set("item." + getItemName(itemStack), null);
+                plugin.priceDataYmlManager.saveConfig();
+            }
+        }
+
         plugin.priceDataYmlManager.getConfig().set("item." + getItemName(itemStack) + ".itemStack", itemStack);
         plugin.priceDataYmlManager.getConfig().set("item." + getItemName(itemStack) + ".price", price);
         plugin.priceDataYmlManager.saveConfig();
@@ -83,7 +93,6 @@ public class itemUtil {
         meta.addEnchant(Enchantment.SILK_TOUCH, 5, true);
         item.setItemMeta(meta);
         player.getInventory().addItem(item);
-        player.sendMessage("asdfasdasdfsdaasdffasd");
     }
 
     public ItemStack getItemStack(String name) {
@@ -93,6 +102,7 @@ public class itemUtil {
     public void printList(Player player) {
         String[] args = new String[3];
         for (String name : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
+            if (name.equals(Material.AIR.name())) continue;
             args[0] = name;
             args[1] = getItemName(getItemStack(name));
             args[2] = String.valueOf(getPrice(getItemStack(name)));

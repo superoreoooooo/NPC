@@ -38,17 +38,6 @@ public class shopExchange {
                 player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.sell", args));
             }
         }
-
-        /**
-        if (itemUtil.priceMap.containsKey(itemStack)) {
-            int price = util.getPrice(itemStack);
-            args[0] = itemUtil.getItemName(itemStack);
-            args[1] = String.valueOf(price);
-
-            itemStack.setAmount(0);
-            acc.addBalance(player.getName(), price);
-            player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.sell", args));
-        }**/
     }
     
     public void buy(Player player, ItemStack itemStack) {
@@ -71,6 +60,7 @@ public class shopExchange {
         }
     }
 
+    @Deprecated
     public void sellItem(Player player, ItemStack itemStack) {
         String[] args = new String[2];
         for (String itemType : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
@@ -123,6 +113,7 @@ public class shopExchange {
         }
     }
 
+    @Deprecated
     public void buyItem(Player player, ItemStack itemStack) {
         String[] args = new String[2];
         for (String itemType : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {

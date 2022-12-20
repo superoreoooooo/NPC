@@ -18,13 +18,13 @@ public class itemCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player player) {
-            if (player.getInventory().getItemInMainHand() == null || player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) return false;
             if (checkPermission(sender)) {
                 sender.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.no-permission", args));
                 return false;
             }
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("remove")) {
+                    if (player.getInventory().getItemInMainHand() == null || player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) return false;
                     util.removePrice(player.getInventory().getItemInMainHand());
                     String[] strings = new String[1];
                     strings[0] = itemUtil.getItemName(player.getInventory().getItemInMainHand());
@@ -42,6 +42,7 @@ public class itemCommand implements CommandExecutor {
             }
             else if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("set")) {
+                    if (player.getInventory().getItemInMainHand() == null || player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) return false;
                     util.setPrice(player.getInventory().getItemInMainHand(), Integer.parseInt(args[1]));
                     String[] strings = new String[2];
                     strings[0] = itemUtil.getItemName(player.getInventory().getItemInMainHand());
