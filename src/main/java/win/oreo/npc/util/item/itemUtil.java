@@ -50,7 +50,7 @@ public class itemUtil {
         for (String itemName : names) {
             if (getItemName(itemStack).equalsIgnoreCase(itemName)) {
                 priceMap.remove(getItemStack(itemName));
-                plugin.priceDataYmlManager.getConfig().set("item." + getItemName(itemStack), null);
+                plugin.priceDataYmlManager.getConfig().set("item." + itemName, null);
                 plugin.priceDataYmlManager.saveConfig();
             }
         }

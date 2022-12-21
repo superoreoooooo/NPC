@@ -78,7 +78,7 @@ public class shopUtil {
         player.openInventory(shopInventory.getInventory());
     }
 
-    public void removeShop(Player player, String name) {
+    public void removeShop(String name) {
         if (!shopMap.containsValue(name)) {
             return;
         }

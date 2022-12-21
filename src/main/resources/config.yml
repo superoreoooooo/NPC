@@ -1,12 +1,14 @@
 prefix: "&f[&b상점&f]"
 prefixAcc: "&f[&b계좌&f]"
+prefixNpc: "&f[&bNPC&f]"
 
 messages:
   no-permission: "&c관리자 권한이 필요합니다."
   no-player: "&c플레이어만 사용 가능합니다."
   exchange:
-    sell: "&6%arg0%&f을 &9%arg1%&f원에 판매했습니다."
-    buy: "&6%arg0%&f을 &9%arg1%&f원에 구매했습니다."
+    sell: "&6%arg0%&f을 &9%arg1%&f원에 판매했습니다. (잔액 : &9%arg2%&f원)"
+    buy: "&6%arg0%&f을 &9%arg1%&f원에 구매했습니다. (잔액 : &9%arg2%&f원)"
+    lack-item: "아이템의 개수가 부족합니다."
   account:
     balance-now: "&a%arg0%&f님의 현재 잔액 : &9%arg1%&f원"
     wrong-name: "잘못된 사용자 이름입니다."

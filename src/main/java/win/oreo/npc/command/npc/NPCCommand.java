@@ -86,7 +86,7 @@ public class NPCCommand implements CommandExecutor {
                     case "remove" :
                         if (args.length == 2) {
                             remove(player, args[1]);
-                            util.removeShop(player, args[1]);
+                            util.removeShop(args[1]);
                             player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.npc.remove", args));
                         } else {
                             Bukkit.dispatchCommand(player, "npc");

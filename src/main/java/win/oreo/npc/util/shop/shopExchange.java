@@ -21,7 +21,7 @@ public class shopExchange {
     
     public void sell(Player player, ItemStack itemStack) {
         String name = itemUtil.getItemName(itemStack);
-        String[] args = new String[2];
+        String[] args = new String[3];
 
         for (ItemStack item : itemUtil.priceMap.keySet()) {
             if (itemUtil.getItemName(item).equals(name) && item.getType().equals(itemStack.getType())) {
@@ -30,11 +30,13 @@ public class shopExchange {
                 args[1] = String.valueOf(price);
 
                 if (item.getAmount() > itemStack.getAmount()) {
-                    player.sendMessage("개수 부족");
+                    player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.lack-item", args));
                     return;
                 }
                 itemStack.setAmount(itemStack.getAmount() - item.getAmount());
                 acc.addBalance(player.getName(), price);
+
+                args[2] = String.valueOf(acc.getBalance(player.getName()));
                 player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.sell", args));
             }
         }
@@ -44,7 +46,7 @@ public class shopExchange {
         String name = itemUtil.getItemName(itemStack);
         if (!itemStack.hasItemMeta()) return;
         String[] priceLore = itemStack.getItemMeta().getLore().get(0).split("원");
-        String[] args = new String[2];
+        String[] args = new String[3];
         int price = Integer.parseInt(priceLore[0]);
 
         for (ItemStack item : itemUtil.priceMap.keySet()) {
@@ -57,6 +59,7 @@ public class shopExchange {
                 }
                 ItemStack isc = item.clone();
                 player.getInventory().addItem(isc);
+                args[2] = String.valueOf(acc.getBalance(player.getName()));
                 player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.buy", args));
             }
         }

@@ -125,25 +125,27 @@ public final class Main extends JavaPlugin {
         this.priceDataYmlManager = new priceDataYmlManager(this);
 
         initializeAccount();
-        initializeNPC();
         initializeShop();
         initializeItem();
+        initializeNPC();
 
         CustomEnchantment.register();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.spigot().setCollidesWithEntities(false);
         }
+
+        Bukkit.getConsoleSender().sendMessage("load complete!");
     }
 
     @Override
     public void onDisable() {
         saveNPC();
+        itemUtil.savePriceData();
         List<NPCPlayer> list = new ArrayList<>(NPCPlayer.getNPCPlayerList());
         for (NPCPlayer player : list) {
             player.removePlayer();
         }
-        itemUtil.savePriceData();
     }
 
     public void initializeItem() {
@@ -159,7 +161,6 @@ public final class Main extends JavaPlugin {
             str[3] = String.valueOf(itemStack.getAmount());
             Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.item.load", str));
         }
-        Bukkit.getConsoleSender().sendMessage("load complete!");
     }
 
     public void initializeNPC() {
@@ -231,6 +232,8 @@ public final class Main extends JavaPlugin {
         }
         if (path.contains("account")) {
             prefix = config.getString("prefixAcc");
+        } else if (path.contains("npc")) {
+            prefix = config.getString("prefixNpc");
         }
 
         boolean open = false;
