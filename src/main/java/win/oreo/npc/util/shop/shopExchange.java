@@ -42,6 +42,7 @@ public class shopExchange {
     
     public void buy(Player player, ItemStack itemStack) {
         String name = itemUtil.getItemName(itemStack);
+        if (!itemStack.hasItemMeta()) return;
         String[] priceLore = itemStack.getItemMeta().getLore().get(0).split("원");
         String[] args = new String[2];
         int price = Integer.parseInt(priceLore[0]);
@@ -54,7 +55,8 @@ public class shopExchange {
                     player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.account.no-balance", args));
                     return;
                 }
-                player.getInventory().addItem(item);
+                ItemStack isc = item.clone();
+                player.getInventory().addItem(isc);
                 player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.exchange.buy", args));
             }
         }

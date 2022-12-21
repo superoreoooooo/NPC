@@ -127,7 +127,7 @@ public final class Main extends JavaPlugin {
         initializeAccount();
         initializeNPC();
         initializeShop();
-        initializePrice();
+        initializeItem();
 
         CustomEnchantment.register();
 
@@ -146,13 +146,18 @@ public final class Main extends JavaPlugin {
         itemUtil.savePriceData();
     }
 
-    public void initializePrice() {
+    public void initializeItem() {
+        String[] str = new String[4];
         for (String name : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
             if (plugin.priceDataYmlManager.getConfig().getItemStack("item." + name + ".itemStack").getType().equals(Material.AIR)) continue;
             win.oreo.npc.util.item.itemUtil.priceMap.put(plugin.priceDataYmlManager.getConfig().getItemStack("item." + name + ".itemStack"), plugin.priceDataYmlManager.getConfig().getInt("item." + name + ".price"));
         }
         for (ItemStack itemStack : win.oreo.npc.util.item.itemUtil.priceMap.keySet()) {
-            Bukkit.getConsoleSender().sendMessage("itemStack : " + itemStack + " name : " + win.oreo.npc.util.item.itemUtil.getItemName(itemStack) + " price : " + win.oreo.npc.util.item.itemUtil.priceMap.get(itemStack));
+            str[0] = win.oreo.npc.util.item.itemUtil.getItemName(itemStack);
+            str[1] = itemStack.getType().name();
+            str[2] = String.valueOf(win.oreo.npc.util.item.itemUtil.priceMap.get(itemStack));
+            str[3] = String.valueOf(itemStack.getAmount());
+            Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.item.load", str));
         }
         Bukkit.getConsoleSender().sendMessage("load complete!");
     }

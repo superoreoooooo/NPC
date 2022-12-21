@@ -1,6 +1,5 @@
 package win.oreo.npc.util.item;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -68,7 +67,7 @@ public class itemUtil {
     }
 
     public int getPrice(ItemStack itemStack) {
-        if (itemStack == null || itemStack.getType().equals(Material.AIR) || priceMap.get(itemStack) == null) return -1;
+        if (itemStack == null || itemStack.getType().equals(Material.AIR) || priceMap.get(itemStack) == null) return 0;
         return priceMap.get(itemStack);
     }
 
@@ -100,12 +99,13 @@ public class itemUtil {
     }
 
     public void printList(Player player) {
-        String[] args = new String[3];
+        String[] args = new String[4];
         for (String name : plugin.priceDataYmlManager.getConfig().getConfigurationSection("item.").getKeys(false)) {
             if (name.equals(Material.AIR.name())) continue;
             args[0] = name;
-            args[1] = getItemName(getItemStack(name));
+            args[1] = getItemStack(name).getType().name();
             args[2] = String.valueOf(getPrice(getItemStack(name)));
+            args[3] = String.valueOf(getItemStack(name).getAmount());
             player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.item.list", args));
         }
     }

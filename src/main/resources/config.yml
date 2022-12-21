@@ -21,7 +21,8 @@ messages:
     remove: "아이템 &6%arg0%&f을 상점 목록에서 제거했습니다."
     set: "아이템 &6%arg0%&f을 &9%arg1%&f원으로 설정했습니다."
     error-overlap: "아이템 &6%arg0%&f은(는) 이미 존재하는 아이템입니다. 이름 중복은 불가능합니다."
-    list: "불러온 아이템 : &6%arg0%&f (종류 : &d%arg1%&f, 가격 : &9%arg2%&f)"
+    list: "저장된 아이템 : &6%arg0%&f (종류 : &d%arg1%&f, 가격 : &9%arg2%&f, 개수 : &9%arg3%&f개)"
+    load: "아이템 &6%arg0%&f를 불러왔습니다. (종류 : &d%arg1%&f, 가격 : &9%arg2%&f, 개수 : &9%arg3%&f개)"
   npc:
     save: "모든 npc를 저장했습니다."
     skin: "npc &b%arg1%&f의 스킨을 %arg2%의 스킨으로 변경했습니다."
