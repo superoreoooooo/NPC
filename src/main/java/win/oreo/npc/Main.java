@@ -177,6 +177,11 @@ public final class Main extends JavaPlugin {
                 Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.npc.npc-load", args));
             }
         }
+        for (EntityPlayer player : Main.npcs) {
+            if (player.getBukkitEntity().isDead()) {
+                player.getBukkitEntity().spigot().respawn();
+            }
+        }
     }
 
     public void initializeAccount() {
