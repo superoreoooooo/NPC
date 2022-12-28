@@ -68,7 +68,7 @@ public class questPlayerCompleter implements TabCompleter {
                         case "set":
                         case "get":
                             completions.add("proceeding");
-                            completions.add("done");
+                            completions.add("complete");
                             break;
                     }
                     break;

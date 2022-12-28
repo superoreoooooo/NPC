@@ -24,8 +24,8 @@ public class questPlayerCommand implements CommandExecutor {
                         case "list" -> {
                             for (QuestPlayer questPlayer : QuestPlayerUtil.questPlayerList) {
                                 for (String npc : questPlayer.getQuestPlayerMap().keySet()) {
-                                    Integer[] list = questPlayer.getQuestPlayerMap().get(npc);
-                                    player.sendMessage("npc : " + npc + " complete : " + list[0] + " status : " + list[1]);
+                                    int list = questPlayer.getQuestPlayerMap().get(npc);
+                                    player.sendMessage("npc : " + npc + " status : " + list + " ?? ");
                                 }
                             }
                         }
@@ -58,8 +58,8 @@ public class questPlayerCommand implements CommandExecutor {
                     switch (args[0]) {
                         case "get":
                             switch (args[3]) {
-                                case "status" -> player.sendMessage("quest status : " + questPlayerUtil.getQuestPlayerStatus(Bukkit.getOfflinePlayer(args[1]), args[2]));
-                                case "complete" -> player.sendMessage("quest complete : " + questPlayerUtil.getQuestPlayerComplete(Bukkit.getOfflinePlayer(args[1]), args[2]));
+                                case "proceeding" -> player.sendMessage("quest proceeding : " + questPlayerUtil.getQuestPlayerProceeding(Bukkit.getOfflinePlayer(args[1]), args[2]));
+                                case "complete" -> player.sendMessage("complete : " + questPlayerUtil.getQuestNpcComplete(Bukkit.getOfflinePlayer(args[1]), args[2]));
                             }
                             break;
                     }
@@ -68,8 +68,8 @@ public class questPlayerCommand implements CommandExecutor {
                     switch (args[0]) {
                         case "set":
                             switch (args[3]) {
-                                case "status" -> questPlayerUtil.setQuestPlayerStatus(Bukkit.getOfflinePlayer(args[1]), args[2], Integer.parseInt(args[4]));
-                                case "complete" -> questPlayerUtil.setQuestPlayerComplete(Bukkit.getOfflinePlayer(args[1]), args[2], Integer.parseInt(args[4]));
+                                case "proceeding" -> questPlayerUtil.setQuestPlayerProceeding(Bukkit.getOfflinePlayer(args[1]), args[2], Integer.parseInt(args[4]));
+                                case "complete" -> questPlayerUtil.setQuestNpcComplete(Bukkit.getOfflinePlayer(args[1]), args[2], Boolean.parseBoolean(args[4]));
                             }
                             break;
                     }

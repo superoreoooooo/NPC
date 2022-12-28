@@ -44,6 +44,7 @@ public class shopListener implements Listener {
         Player player = e.getPlayer();
         if (coolDown.contains(player)) return;
         delay(player);
+        if (e.getPlayer().isSneaking()) return;
         if (e.getRightClicked().getType().equals(EntityType.PLAYER)) {
             if (e.getRightClicked().hasMetadata("npc")) {
                 String str = e.getRightClicked().getMetadata("npc").get(0).asString();

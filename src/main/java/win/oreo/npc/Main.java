@@ -43,10 +43,7 @@ import win.oreo.npc.util.quest.QuestUtil;
 import win.oreo.npc.util.shop.shopUtil;
 import win.oreo.npc.version.Version;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public final class Main extends JavaPlugin {
     private static Main plugin;
@@ -195,14 +192,17 @@ public final class Main extends JavaPlugin {
 
     public void initializeQuestPlayer() {
         for (String playerName : questYml.getConfig().getConfigurationSection("player.").getKeys(false)) {
-            HashMap<String, Integer[]> map = new HashMap<>();
+            HashMap<String, Integer> map = new HashMap<>();
+            HashMap<String, Integer> map2 = new HashMap<>();
+            Set<String> com = new HashSet<>();
             for (String npcName : questYml.getConfig().getConfigurationSection("player." + playerName + ".npc.").getKeys(false)) {
-                Integer[] integers = new Integer[2];
-                integers[0] = questYml.getConfig().getInt("player." + playerName + ".npc." + npcName + ".done");
-                integers[1] = questYml.getConfig().getInt("player." + playerName + ".npc." + npcName + ".proceeding");
-                map.put(npcName, integers);
+                if (questYml.getConfig().getBoolean("player." + playerName + ".npc." + npcName + ".complete")) com.add(npcName);
+                int i = questYml.getConfig().getInt("player." + playerName + ".npc." + npcName + ".proceeding");
+                int j = questYml.getConfig().getInt("player." + playerName + ".npc." + npcName + ".progress");
+                map.put(npcName, i);
+                map2.put(npcName, j);
             }
-            QuestPlayer questPlayer = new QuestPlayer(Bukkit.getOfflinePlayer(playerName), map);
+            QuestPlayer questPlayer = new QuestPlayer(Bukkit.getOfflinePlayer(playerName), map, com, map2);
             QuestPlayerUtil.questPlayerList.add(questPlayer);
             Bukkit.getConsoleSender().sendMessage("QuestPlayer loaded | name : " + questPlayer.getPlayer().getName() + " list : " + questPlayer.getQuestPlayerMap().toString());
         }
