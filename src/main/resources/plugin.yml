@@ -17,3 +17,12 @@ commands:
       - 계좌
       - money
       - balance
+  questnpc:
+    aliases:
+      - qnpc
+  quest:
+    aliases:
+      - 퀘스트
+  questplayer:
+    aliases:
+      - qplayer

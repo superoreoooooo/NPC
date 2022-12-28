@@ -9,11 +9,16 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import win.oreo.npc.command.quest.questCommand;
+import win.oreo.npc.command.quest.questCompleter;
+import win.oreo.npc.command.questNpc.questNpcCommand;
+import win.oreo.npc.command.questNpc.questNpcCompleter;
+import win.oreo.npc.command.questPlayer.questPlayerCommand;
+import win.oreo.npc.command.questPlayer.questPlayerCompleter;
 import win.oreo.npc.listener.account.accountListener;
+import win.oreo.npc.listener.quest.questNpcListener;
 import win.oreo.npc.listener.shop.shopListener;
-import win.oreo.npc.manager.accountYmlManager;
-import win.oreo.npc.manager.priceDataYmlManager;
-import win.oreo.npc.manager.shopYmlManager;
+import win.oreo.npc.manager.*;
 import win.oreo.npc.util.account.account;
 import win.oreo.npc.util.item.CustomEnchantment;
 import win.oreo.npc.util.item.itemUtil;
@@ -27,12 +32,19 @@ import win.oreo.npc.command.item.itemCommand;
 import win.oreo.npc.listener.npc.DeathListener;
 import win.oreo.npc.listener.npc.PreLoginListener;
 import win.oreo.npc.listener.npc.playerMovementListener;
-import win.oreo.npc.manager.npcYmlManager;
 import win.oreo.npc.util.npc.Color;
+import win.oreo.npc.util.quest.Quest;
+import win.oreo.npc.util.quest.npc.QuestNpc;
+import win.oreo.npc.util.quest.npc.QuestNpcUtil;
+import win.oreo.npc.util.quest.player.QuestPlayer;
+import win.oreo.npc.util.quest.player.QuestPlayerUtil;
+import win.oreo.npc.util.quest.questType;
+import win.oreo.npc.util.quest.QuestUtil;
 import win.oreo.npc.util.shop.shopUtil;
 import win.oreo.npc.version.Version;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +56,7 @@ public final class Main extends JavaPlugin {
     public npcYmlManager ymlManager;
     public win.oreo.npc.manager.shopYmlManager shopYmlManager;
     public win.oreo.npc.manager.priceDataYmlManager priceDataYmlManager;
+    public win.oreo.npc.manager.questYml questYml;
 
     private boolean usesPaper = false;
     private boolean updatedPaper = false;
@@ -103,12 +116,19 @@ public final class Main extends JavaPlugin {
         getCommand("account").setTabCompleter(new accountCompleter());
         getCommand("item").setExecutor(new itemCommand());
         getCommand("item").setTabCompleter(new itemCompleter());
+        getCommand("quest").setExecutor(new questCommand());
+        getCommand("quest").setTabCompleter(new questCompleter());
+        getCommand("questnpc").setExecutor(new questNpcCommand());
+        getCommand("questnpc").setTabCompleter(new questNpcCompleter());
+        getCommand("questplayer").setExecutor(new questPlayerCommand());
+        getCommand("questplayer").setTabCompleter(new questPlayerCompleter());
 
         getServer().getPluginManager().registerEvents(new DeathListener(), this);
         getServer().getPluginManager().registerEvents(new PreLoginListener(), this);
         getServer().getPluginManager().registerEvents(new playerMovementListener(), this);
         getServer().getPluginManager().registerEvents(new shopListener(), this);
         getServer().getPluginManager().registerEvents(new accountListener(), this);
+        getServer().getPluginManager().registerEvents(new questNpcListener(), this);
 
         plugin = this;
 
@@ -123,10 +143,14 @@ public final class Main extends JavaPlugin {
         this.shopYmlManager = new shopYmlManager(this);
         this.accountYmlManager = new accountYmlManager(this);
         this.priceDataYmlManager = new priceDataYmlManager(this);
+        this.questYml = new questYml(this);
 
         initializeAccount();
         initializeShop();
         initializeItem();
+        initializeQuest();
+        initializeQuestNpc();
+        initializeQuestPlayer();
         initializeNPC();
 
         CustomEnchantment.register();
@@ -142,9 +166,59 @@ public final class Main extends JavaPlugin {
     public void onDisable() {
         saveNPC();
         itemUtil.savePriceData();
+        QuestUtil questUtil = new QuestUtil();
+        questUtil.saveAllQuest();
+        QuestNpcUtil questNpcUtil = new QuestNpcUtil();
+        questNpcUtil.saveAllQuestNpc();
+        QuestPlayerUtil questPlayerUtil = new QuestPlayerUtil();
+        questPlayerUtil.saveAllQuestPlayer();
         List<NPCPlayer> list = new ArrayList<>(NPCPlayer.getNPCPlayerList());
         for (NPCPlayer player : list) {
             player.removePlayer();
+        }
+    }
+
+    public void initializeQuest() {
+        for (String uuid : questYml.getConfig().getConfigurationSection("quest.").getKeys(false)) {
+            UUID questID = UUID.fromString(uuid);
+            String name = questYml.getConfig().getString("quest." + uuid + ".name");
+            questType type = questType.valueOf(questYml.getConfig().getString("quest." + uuid + ".type"));
+            Object target = questYml.getConfig().get("quest." + uuid + ".target");
+            int goal = questYml.getConfig().getInt("quest." + uuid + ".goal");
+            ItemStack reward = questYml.getConfig().getItemStack("quest." + uuid + ".reward");
+            String description = questYml.getConfig().getString("quest." + uuid + ".description");
+            Quest quest = new Quest(questID, name, type, target, goal, reward, description);
+            QuestUtil.questList.add(quest);
+            Bukkit.getConsoleSender().sendMessage("Quest loaded / name : " + quest.getQuestName() + " UUID : " + quest.getQuestID());
+        }
+    }
+
+    public void initializeQuestPlayer() {
+        for (String playerName : questYml.getConfig().getConfigurationSection("player.").getKeys(false)) {
+            HashMap<String, Integer[]> map = new HashMap<>();
+            for (String npcName : questYml.getConfig().getConfigurationSection("player." + playerName + ".npc.").getKeys(false)) {
+                Integer[] integers = new Integer[2];
+                integers[0] = questYml.getConfig().getInt("player." + playerName + ".npc." + npcName + ".done");
+                integers[1] = questYml.getConfig().getInt("player." + playerName + ".npc." + npcName + ".proceeding");
+                map.put(npcName, integers);
+            }
+            QuestPlayer questPlayer = new QuestPlayer(Bukkit.getOfflinePlayer(playerName), map);
+            QuestPlayerUtil.questPlayerList.add(questPlayer);
+            Bukkit.getConsoleSender().sendMessage("QuestPlayer loaded | name : " + questPlayer.getPlayer().getName() + " list : " + questPlayer.getQuestPlayerMap().toString());
+        }
+    }
+
+    public void initializeQuestNpc() {
+        QuestUtil questUtil = new QuestUtil();
+        for (String name : questYml.getConfig().getConfigurationSection("npc.").getKeys(false)) {
+            HashMap<Integer, Quest> map = new HashMap<>();
+            for (int i = 0; i < questYml.getConfig().getInt("npc." + name + ".count"); i++) {
+                UUID uuid = UUID.fromString(questYml.getConfig().getString("npc." + name + ".list." + i));
+                map.put(i, questUtil.getQuestByID(uuid));
+            }
+            QuestNpc npc = new QuestNpc(name, map);
+            QuestNpcUtil.questNpcList.add(npc);
+            Bukkit.getConsoleSender().sendMessage("QuestNpc loaded | name : " + npc.getNpcName() + " list : " + npc.getQuestMap().toString());
         }
     }
 
