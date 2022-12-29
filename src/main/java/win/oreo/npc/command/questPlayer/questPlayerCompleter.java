@@ -59,7 +59,7 @@ public class questPlayerCompleter implements TabCompleter {
                         case "remove":
                         case "set":
                         case "get":
-                            completions.addAll(questPlayerUtil.getQuestPlayer(player).getQuestPlayerMap().keySet());
+                            completions.addAll(questPlayerUtil.getQuestPlayer(player).getQuestProceedingMap().keySet());
                             break;
                     }
                     break;

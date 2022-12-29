@@ -158,7 +158,6 @@ public class questCommand implements CommandExecutor {
                         strings[0] = quest.getQuestName();
                         questRemoveMsg(player, quest);
                         questUtil.removeQuest(quest);
-                        player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.remove", strings));
                         break;
                     case "addrandom":
                         Quest rQuest = new Quest(UUID.randomUUID(), getRandomWord(7),

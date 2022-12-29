@@ -17,8 +17,8 @@ public class QuestPlayerUtil {
 
     public void saveAllQuestPlayer() {
         for (QuestPlayer questPlayer : questPlayerList) {
-            for (String npcName : questPlayer.getQuestPlayerMap().keySet()) {
-                plugin.questYml.getConfig().set("player." + questPlayer.getPlayer().getName() + ".npc." + npcName + ".proceeding", questPlayer.getQuestPlayerMap().get(npcName));
+            for (String npcName : questPlayer.getQuestProceedingMap().keySet()) {
+                plugin.questYml.getConfig().set("player." + questPlayer.getPlayer().getName() + ".npc." + npcName + ".proceeding", questPlayer.getQuestProceedingMap().get(npcName));
                 plugin.questYml.getConfig().set("player." + questPlayer.getPlayer().getName() + ".npc." + npcName + ".progress", questPlayer.getQuestProgressMap().get(npcName));
                 if (questPlayer.getQuestCompleteSet().contains(npcName)) {
                     plugin.questYml.getConfig().set("player." + questPlayer.getPlayer().getName() + ".npc." + npcName + ".complete", true);
@@ -39,15 +39,20 @@ public class QuestPlayerUtil {
     }
 
     public void addNpc(OfflinePlayer player, String npcName) {
-        if (getQuestPlayer(player).getQuestPlayerMap() == null) createQuestPlayer(player);
-        if (getQuestPlayer(player).getQuestPlayerMap().containsKey(npcName)) return;
-        getQuestPlayer(player).getQuestPlayerMap().put(npcName, -1);
+        if (getQuestPlayer(player).getQuestProceedingMap() == null) createQuestPlayer(player);
+        if (getQuestPlayer(player).getQuestProceedingMap().containsKey(npcName)) return;
+        getQuestPlayer(player).getQuestProceedingMap().put(npcName, -1);
         getQuestPlayer(player).getQuestProgressMap().put(npcName, 0);
     }
 
     public void setQuestProgress(OfflinePlayer player, String npcName, int progress) {
         if (getQuestPlayer(player).getQuestProgressMap() == null) return;
         getQuestPlayer(player).getQuestProgressMap().put(npcName, progress);
+    }
+
+    public int getQuestProgress(OfflinePlayer player, String npcName) {
+        if (getQuestPlayer(player).getQuestProgressMap() == null) return 0;
+        return getQuestPlayer(player).getQuestProgressMap().get(npcName);
     }
 
     public void setQuestNpcComplete(OfflinePlayer player, String npcName, boolean bool) {
@@ -61,22 +66,22 @@ public class QuestPlayerUtil {
         else return false;
     }
 
-    public void setQuestPlayerProceeding(OfflinePlayer player, String npcName, int proceeding) {
-        if (!getQuestPlayer(player).getQuestPlayerMap().containsKey(npcName)) return;
-        getQuestPlayer(player).getQuestPlayerMap().put(npcName, proceeding);
+    public void setQuestProceeding(OfflinePlayer player, String npcName, int proceeding) {
+        if (!getQuestPlayer(player).getQuestProceedingMap().containsKey(npcName)) return;
+        getQuestPlayer(player).getQuestProceedingMap().put(npcName, proceeding);
     }
 
-    public int getQuestPlayerProceeding(OfflinePlayer player, String npcName) {
-        if (!getQuestPlayer(player).getQuestPlayerMap().containsKey(npcName)) return -1;
-        return getQuestPlayer(player).getQuestPlayerMap().get(npcName);
+    public int getQuestProceeding(OfflinePlayer player, String npcName) {
+        if (!getQuestPlayer(player).getQuestProceedingMap().containsKey(npcName)) return -1;
+        return getQuestPlayer(player).getQuestProceedingMap().get(npcName);
     }
 
     public Set<String> getQuestNpcs(OfflinePlayer player) {
-        return getQuestPlayer(player).getQuestPlayerMap().keySet();
+        return getQuestPlayer(player).getQuestProceedingMap().keySet();
     }
 
     public void removeNpc(OfflinePlayer player, String npcName) {
-        getQuestPlayer(player).getQuestPlayerMap().remove(npcName);
+        getQuestPlayer(player).getQuestProceedingMap().remove(npcName);
         setQuestNpcComplete(player, npcName, false);
     }
 

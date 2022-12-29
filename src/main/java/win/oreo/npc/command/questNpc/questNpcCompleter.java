@@ -45,6 +45,7 @@ public class questNpcCompleter implements TabCompleter {
                                 completions.add(npc.getName());
                             }
                             break;
+                        case "list":
                         case "remove":
                             for (QuestNpc npc : QuestNpcUtil.questNpcList) {
                                 completions.add(npc.getNpcName());
@@ -57,6 +58,7 @@ public class questNpcCompleter implements TabCompleter {
                         case "add":
                             List<UUID> questIDs = new ArrayList<>();
                             QuestUtil.questList.forEach(quest -> questIDs.add(quest.getQuestID()));
+                            completions.add("all");
                             for (UUID uuid : questIDs) {
                                 completions.add(uuid.toString());
                             }
@@ -64,7 +66,7 @@ public class questNpcCompleter implements TabCompleter {
                         case "remove":
                             QuestNpc npc = questNpcUtil.getQuestNpc(args[1]);
                             HashMap<Integer, Quest> questMap = npc.getQuestMap();
-                            completions.add("remove");
+                            completions.add("all");
                             for (Quest quest : questMap.values()) {
                                 completions.add(quest.getQuestID().toString());
                             }

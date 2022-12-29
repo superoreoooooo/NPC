@@ -2,7 +2,6 @@ package win.oreo.npc.listener.quest;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -50,16 +49,23 @@ public class questNpcListener implements Listener {
 
         if (questPlayer == null) return;
 
-        for (String str : questPlayer.getQuestPlayerMap().keySet()) {
-            int proceeding = questPlayer.getQuestPlayerMap().get(str);
+        for (String str : questPlayer.getQuestProceedingMap().keySet()) {
+            int proceeding = questPlayer.getQuestProceedingMap().get(str);
             if (proceeding == -1) continue;
             int progress = questPlayer.getQuestProgressMap().get(str);
+            String[] strings = new String[4];
             Quest quest = questNpcUtil.getQuestNpc(str).getQuestMap().get(proceeding);
             if (victim.getType().name().equals(quest.getQuestTarget().toString())) {
                 questPlayer.getQuestProgressMap().put(str, progress + 1);
-                player.sendMessage("quest by " + str + " name : " + quest.getQuestName() + " target : " + quest.getQuestTarget() + " goal : " + quest.getQuestGoal() + " progress : (" + (progress + 1) + "/" + quest.getQuestGoal() + ")");
-                if (progress >= quest.getQuestGoal()) {
-                    player.sendMessage("quest done!");
+                strings[0] = quest.getQuestName();
+                strings[1] = String.valueOf(progress + 1);
+                strings[2] = String.valueOf(quest.getQuestGoal());
+                strings[3] = quest.getQuestTarget().toString();
+                player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.now", strings));
+                if (progress >= quest.getQuestGoal() - 1) {
+                    strings[0] = quest.getQuestName();
+                    strings[1] = str;
+                    player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.complete", strings));
                 }
             }
         }
@@ -88,25 +94,29 @@ public class questNpcListener implements Listener {
                 QuestPlayer questPlayer = questPlayerUtil.getQuestPlayer(player);
                 QuestNpc questNpc = questNpcUtil.getQuestNpc(str);
 
+                String[] strings = new String[6];
+
                 if (questNpc == null) {
-                    player.sendMessage("please add quest to npc");
+                    player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.add-quest", strings));
                     return;
                 }
 
                 if (questPlayerUtil.getQuestNpcs(player).contains(questNpc.getNpcName())) {
                     if (questPlayer.getQuestCompleteSet().contains(questNpc.getNpcName())) {
-                        player.sendMessage("you already done this npc's quests");
+                        strings[0] = questNpc.getNpcName();
+                        player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.complete-all", strings));
                         return;
                     }
 
                     boolean clear = false;
 
-                    int proceeding = questPlayer.getQuestPlayerMap().get(questNpc.getNpcName());
+                    int proceeding = questPlayer.getQuestProceedingMap().get(questNpc.getNpcName());
 
                     if (proceeding == -1) {
                         proceeding = 0;
-                        questPlayer.getQuestPlayerMap().put(questNpc.getNpcName(), proceeding);
-                        player.sendMessage("hello?");
+                        questPlayer.getQuestProceedingMap().put(questNpc.getNpcName(), proceeding);
+                        strings[0] = questNpc.getNpcName();
+                        player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.start", strings));
                         return;
                     }
 
@@ -116,8 +126,16 @@ public class questNpcListener implements Listener {
                     int goal = questNpc.getQuestMap().get(proceeding).getQuestGoal();
                     questType type = questNpc.getQuestMap().get(proceeding).getQuestType();
                     int progress = questPlayer.getQuestProgressMap().get(str);
+                    ItemStack reward = quest.getQuestReward();
 
-                    player.sendMessage("quest by " + str + " name : " + questName + " target : " + target + " goal : " + goal + " progress : (" + progress + "/" + goal + ")");
+                    strings[0] = questNpc.getNpcName();
+                    strings[1] = questName;
+                    strings[2] = target.toString();
+                    strings[3] = String.valueOf(goal);
+                    strings[4] = reward.getType().name();
+                    strings[5] = String.valueOf(reward.getAmount());
+
+                    //player.sendMessage("quest by " + str + " name : " + questName + " target : " + target + " goal : " + goal + " progress : (" + progress + "/" + goal + ")");
 
                     switch (type) {
                         case HUNT -> {
@@ -126,25 +144,37 @@ public class questNpcListener implements Listener {
                             }
                         }
                         case COLLECT -> {
-                            ItemStack item = new ItemStack(Material.getMaterial(target.toString()), goal);
-                            if (player.getInventory().getItemInMainHand().equals(item)) {
-                                player.getInventory().remove(item);
+                            if (player.getInventory().getItemInMainHand().getType().equals(Material.getMaterial(target.toString())) && player.getInventory().getItemInMainHand().getAmount() >= goal) {
+                                player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - goal);
                                 clear = true;
                             }
                         }
                     }
 
-                    if (!clear) return;
-                    player.sendMessage("quest clear!");
+                    if (!clear) {
+                        switch (type) {
+                            case HUNT -> player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.data-hunt", strings));
+                            case COLLECT -> player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.data-collect", strings));
+                        }
+                        return;
+                    }
+
+                    strings[0] = quest.getQuestName();
+                    strings[1] = reward.getType().name();
+                    strings[2] = String.valueOf(reward.getAmount());
+
+                    player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.reward", strings));
                     proceeding++;
-                    ItemStack reward = quest.getQuestReward();
                     player.getInventory().addItem(reward);
+
+                    strings[1] = questNpc.getNpcName();
 
                     if (questNpc.getQuestMap().size() == proceeding) {
                         questPlayerUtil.setQuestNpcComplete(player, questNpc.getNpcName(), true);
-                        player.sendMessage("all done!");
+                        strings[0] = questNpc.getNpcName();
+                        player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.complete-all", strings));
                     }
-                    questPlayerUtil.setQuestPlayerProceeding(player, questNpc.getNpcName(), proceeding);
+                    questPlayerUtil.setQuestProceeding(player, questNpc.getNpcName(), proceeding);
                     questPlayerUtil.setQuestProgress(player, questNpc.getNpcName(), 0);
                 } else {
                     questPlayerUtil.addNpc(player, questNpc.getNpcName());

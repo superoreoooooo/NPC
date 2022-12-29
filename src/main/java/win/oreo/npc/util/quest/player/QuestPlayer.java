@@ -7,13 +7,13 @@ import java.util.Set;
 
 public class QuestPlayer {
     private OfflinePlayer player;
-    private HashMap<String, Integer> questPlayerMap; //npc / proceeding
+    private HashMap<String, Integer> questProceedingMap; //npc / proceeding
     private HashMap<String, Integer> questProgressMap; //npc / progress
     private Set<String> questCompleteSet;
 
-    public QuestPlayer(OfflinePlayer player, HashMap<String, Integer> questPlayerMap, Set<String> questCompleteList, HashMap<String, Integer> questProgressMap) {
+    public QuestPlayer(OfflinePlayer player, HashMap<String, Integer> questProceedingMap, Set<String> questCompleteList, HashMap<String, Integer> questProgressMap) {
         this.player = player;
-        this.questPlayerMap = questPlayerMap;
+        this.questProceedingMap = questProceedingMap;
         this.questCompleteSet = questCompleteList;
         this.questProgressMap = questProgressMap;
     }
@@ -22,8 +22,8 @@ public class QuestPlayer {
         return player;
     }
 
-    public HashMap<String, Integer> getQuestPlayerMap() {
-        return questPlayerMap;
+    public HashMap<String, Integer> getQuestProceedingMap() {
+        return questProceedingMap;
     }
 
     public Set<String> getQuestCompleteSet() {

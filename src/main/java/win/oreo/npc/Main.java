@@ -176,7 +176,9 @@ public final class Main extends JavaPlugin {
     }
 
     public void initializeQuest() {
+        String[] args = new String[2];
         for (String uuid : questYml.getConfig().getConfigurationSection("quest.").getKeys(false)) {
+
             UUID questID = UUID.fromString(uuid);
             String name = questYml.getConfig().getString("quest." + uuid + ".name");
             questType type = questType.valueOf(questYml.getConfig().getString("quest." + uuid + ".type"));
@@ -184,13 +186,16 @@ public final class Main extends JavaPlugin {
             int goal = questYml.getConfig().getInt("quest." + uuid + ".goal");
             ItemStack reward = questYml.getConfig().getItemStack("quest." + uuid + ".reward");
             String description = questYml.getConfig().getString("quest." + uuid + ".description");
-            Quest quest = new Quest(questID, name, type, target, goal, reward, description);
-            QuestUtil.questList.add(quest);
-            Bukkit.getConsoleSender().sendMessage("Quest loaded / name : " + quest.getQuestName() + " UUID : " + quest.getQuestID());
+
+            QuestUtil.questList.add(new Quest(questID, name, type, target, goal, reward, description));
+            args[0] = name;
+            args[1] = questID.toString();
+            Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.quest.load", args));
         }
     }
 
     public void initializeQuestPlayer() {
+        String[] args = new String[1];
         for (String playerName : questYml.getConfig().getConfigurationSection("player.").getKeys(false)) {
             HashMap<String, Integer> map = new HashMap<>();
             HashMap<String, Integer> map2 = new HashMap<>();
@@ -204,12 +209,14 @@ public final class Main extends JavaPlugin {
             }
             QuestPlayer questPlayer = new QuestPlayer(Bukkit.getOfflinePlayer(playerName), map, com, map2);
             QuestPlayerUtil.questPlayerList.add(questPlayer);
-            Bukkit.getConsoleSender().sendMessage("QuestPlayer loaded | name : " + questPlayer.getPlayer().getName() + " list : " + questPlayer.getQuestPlayerMap().toString());
+            args[0] = playerName;
+            Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.quest.player.load", args));
         }
     }
 
     public void initializeQuestNpc() {
         QuestUtil questUtil = new QuestUtil();
+        String[] args = new String[2];
         for (String name : questYml.getConfig().getConfigurationSection("npc.").getKeys(false)) {
             HashMap<Integer, Quest> map = new HashMap<>();
             for (int i = 0; i < questYml.getConfig().getInt("npc." + name + ".count"); i++) {
@@ -218,7 +225,11 @@ public final class Main extends JavaPlugin {
             }
             QuestNpc npc = new QuestNpc(name, map);
             QuestNpcUtil.questNpcList.add(npc);
-            Bukkit.getConsoleSender().sendMessage("QuestNpc loaded | name : " + npc.getNpcName() + " list : " + npc.getQuestMap().toString());
+            args[0] = npc.getNpcName();
+            List<String> list = new ArrayList<>();
+            npc.getQuestMap().values().forEach(quest -> list.add(quest.getQuestID().toString()));
+            args[1] = list.toString();
+            Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.quest.npc.load", args));
         }
     }
 
@@ -311,6 +322,8 @@ public final class Main extends JavaPlugin {
         }
         if (path.contains("account")) {
             prefix = config.getString("prefixAcc");
+        } else if (path.contains("quest")) {
+            prefix = config.getString("prefixQuest");
         } else if (path.contains("npc")) {
             prefix = config.getString("prefixNpc");
         }
