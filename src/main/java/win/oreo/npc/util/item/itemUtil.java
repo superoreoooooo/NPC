@@ -81,15 +81,15 @@ public class itemUtil {
     }
 
     public void testItem(Player player) {
-        ItemStack item = new ItemStack(Material.GOLD_AXE);
+        ItemStack item = new ItemStack(Material.DIAMOND_AXE);
+        item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1000000);
         ItemMeta meta = item.getItemMeta();
         List<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatColor.GOLD + "테스트");
+        lore.add(ChatColor.GOLD + "세계관최강자");
         lore.add("");
         meta.setLore(lore);
-        meta.setDisplayName("테스트");
-        meta.addEnchant(Enchantment.SILK_TOUCH, 5, true);
+        meta.setDisplayName("지존도끼");
         item.setItemMeta(meta);
         player.getInventory().addItem(item);
     }

@@ -55,6 +55,7 @@ public class questNpcListener implements Listener {
             int progress = questPlayer.getQuestProgressMap().get(str);
             String[] strings = new String[4];
             Quest quest = questNpcUtil.getQuestNpc(str).getQuestMap().get(proceeding);
+            if (quest == null) return;
             if (victim.getType().name().equals(quest.getQuestTarget().toString())) {
                 questPlayer.getQuestProgressMap().put(str, progress + 1);
                 strings[0] = quest.getQuestName();
