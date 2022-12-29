@@ -48,9 +48,7 @@ public class questPlayerCommand implements CommandExecutor {
                             questPlayerUtil.addNpc(Bukkit.getOfflinePlayer(args[1]), args[2]);
                         }
                         case "remove" -> {
-                            switch (args[1]) {
-                                default -> questPlayerUtil.removeNpc(Bukkit.getOfflinePlayer(args[1]), args[2]);
-                            }
+                            questPlayerUtil.removeNpc(Bukkit.getOfflinePlayer(args[1]), args[2]);
                         }
                     }
                     break;

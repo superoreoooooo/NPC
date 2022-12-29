@@ -48,6 +48,8 @@ public class questNpcListener implements Listener {
 
         QuestPlayer questPlayer = questPlayerUtil.getQuestPlayer(player);
 
+        if (questPlayer == null) return;
+
         for (String str : questPlayer.getQuestPlayerMap().keySet()) {
             int proceeding = questPlayer.getQuestPlayerMap().get(str);
             if (proceeding == -1) continue;
@@ -86,6 +88,11 @@ public class questNpcListener implements Listener {
                 QuestPlayer questPlayer = questPlayerUtil.getQuestPlayer(player);
                 QuestNpc questNpc = questNpcUtil.getQuestNpc(str);
 
+                if (questNpc == null) {
+                    player.sendMessage("please add quest to npc");
+                    return;
+                }
+
                 if (questPlayerUtil.getQuestNpcs(player).contains(questNpc.getNpcName())) {
                     if (questPlayer.getQuestCompleteSet().contains(questNpc.getNpcName())) {
                         player.sendMessage("you already done this npc's quests");
@@ -97,18 +104,20 @@ public class questNpcListener implements Listener {
                     int proceeding = questPlayer.getQuestPlayerMap().get(questNpc.getNpcName());
 
                     if (proceeding == -1) {
-                        questPlayer.getQuestPlayerMap().put(questNpc.getNpcName(), 0);
+                        proceeding = 0;
+                        questPlayer.getQuestPlayerMap().put(questNpc.getNpcName(), proceeding);
                         player.sendMessage("hello?");
                         return;
                     }
 
                     Quest quest = questNpc.getQuestMap().get(proceeding);
+                    String questName = quest.getQuestName();
                     Object target = questNpc.getQuestMap().get(proceeding).getQuestTarget();
                     int goal = questNpc.getQuestMap().get(proceeding).getQuestGoal();
                     questType type = questNpc.getQuestMap().get(proceeding).getQuestType();
                     int progress = questPlayer.getQuestProgressMap().get(str);
 
-                    player.sendMessage("quest by " + str + " name : " + quest.getQuestName() + " target : " + quest.getQuestTarget() + " goal : " + quest.getQuestGoal() + " progress : (" + progress + "/" + quest.getQuestGoal() + ")");
+                    player.sendMessage("quest by " + str + " name : " + questName + " target : " + target + " goal : " + goal + " progress : (" + progress + "/" + goal + ")");
 
                     switch (type) {
                         case HUNT -> {
@@ -118,7 +127,8 @@ public class questNpcListener implements Listener {
                         }
                         case COLLECT -> {
                             ItemStack item = new ItemStack(Material.getMaterial(target.toString()), goal);
-                            if (player.getInventory().contains(item)) {
+                            if (player.getInventory().getItemInMainHand().equals(item)) {
+                                player.getInventory().remove(item);
                                 clear = true;
                             }
                         }
@@ -127,6 +137,9 @@ public class questNpcListener implements Listener {
                     if (!clear) return;
                     player.sendMessage("quest clear!");
                     proceeding++;
+                    ItemStack reward = quest.getQuestReward();
+                    player.getInventory().addItem(reward);
+
                     if (questNpc.getQuestMap().size() == proceeding) {
                         questPlayerUtil.setQuestNpcComplete(player, questNpc.getNpcName(), true);
                         player.sendMessage("all done!");

@@ -77,6 +77,7 @@ public class QuestPlayerUtil {
 
     public void removeNpc(OfflinePlayer player, String npcName) {
         getQuestPlayer(player).getQuestPlayerMap().remove(npcName);
+        setQuestNpcComplete(player, npcName, false);
     }
 
     public void removeAllQuestPlayer() {
