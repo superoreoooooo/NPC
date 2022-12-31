@@ -65,7 +65,7 @@ messages:
     now: "%arg0% 진행도 : (%arg1%/%arg2%), 목표:%arg3%"
     start: "npc %arg0%의 퀘스트를 시작했습니다."
     add-quest: "npc에 퀘스트를 추가해 주세요."
-    complete: "퀘스트 %arg0%을 완료했습니다. npc %arg1%에게 가서 보상을 획득하세요."
+    complete: "퀘스트 %arg0%을 완료했습니다. npc %arg1%에게 가서 보상을 획득하세요. \n&c&l&o&n!!!받지 않은 보상은 삭제됩니다!!!"
     complete-all: "npc %arg0%의 모든 퀘스트를 완료했습니다."
     data-hunt: "npc %arg0%의 퀘스트 %arg1% (목표:%arg2% %arg3%마리, 보상:%arg4% %arg5%개)"
     data-collect: "npc %arg0%의 퀘스트 %arg1% (목표:%arg2% %arg3%개, 보상:%arg4% %arg5%개)"

@@ -1,5 +1,6 @@
 package win.oreo.npc.listener.quest;
 
+import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -8,11 +9,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import win.oreo.npc.Main;
+import win.oreo.npc.command.npc.NPCCommand;
 import win.oreo.npc.util.quest.Quest;
+import win.oreo.npc.util.quest.QuestInventory;
 import win.oreo.npc.util.quest.npc.QuestNpc;
 import win.oreo.npc.util.quest.npc.QuestNpcUtil;
 import win.oreo.npc.util.quest.player.QuestPlayer;
@@ -26,7 +34,8 @@ public class questNpcListener implements Listener {
     private QuestNpcUtil questNpcUtil;
     private QuestPlayerUtil questPlayerUtil;
 
-    List<Player> coolDown = new ArrayList<>();
+    private static List<Inventory> inventories = new ArrayList<>();
+    private static List<Player> coolDown = new ArrayList<>();
 
     public questNpcListener() {
         this.questNpcUtil = new QuestNpcUtil();
@@ -36,6 +45,32 @@ public class questNpcListener implements Listener {
     public void delay(Player player) {
         coolDown.add(player);
         Bukkit.getScheduler().runTaskLaterAsynchronously(JavaPlugin.getPlugin(Main.class), () -> coolDown.remove(player), 10);
+    }
+
+    @EventHandler
+    public void onClick(InventoryClickEvent e) {
+        if (NPCCommand.editorList.contains((Player)e.getWhoClicked())) return;
+        if (e.getClickedInventory() == null) {
+            return;
+        }
+        if (e.getClickedInventory().getTitle().contains("의 보상")) {
+            if (e.getCurrentItem() == null) return;
+            if (e.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE)) {
+                e.setCancelled(true);
+                if (coolDown.contains((Player)e.getWhoClicked())) return;
+                delay((Player)e.getWhoClicked());
+            }
+        }
+        //e.getWhoClicked().sendMessage(e.getClickedInventory().getName() + " // " + e.getClick().toString() + " // " + e.getCurrentItem().getType().toString() + " // " + e.getCursor().getType().toString() + " // " + e.getAction().toString());
+    }
+
+    @EventHandler
+    public void onDrag(InventoryDragEvent e) {
+        if (NPCCommand.editorList.contains((Player)e.getWhoClicked())) return;
+        if (e.getCursor() == null) return;
+        if (e.getCursor().getType().equals(Material.STAINED_GLASS_PANE)) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -166,7 +201,11 @@ public class questNpcListener implements Listener {
 
                     player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.reward", strings));
                     proceeding++;
-                    player.getInventory().addItem(reward);
+
+                    QuestInventory questInventory = new QuestInventory(reward, questNpc.getNpcName());
+                    Inventory inventory = questInventory.getInventory();
+                    inventories.add(inventory);
+                    player.openInventory(inventory);
 
                     strings[1] = questNpc.getNpcName();
 
