@@ -49,14 +49,12 @@ public class v1_12_R1 {
 
         mcServer.getPlayerList().a(entityPlayer);
         Location loc = bukkitPlayer.getLocation();
-        entityPlayer.setPosition(x,y,z);
-
         entityPlayer.setPositionRotation(x, y, z, loc.getYaw(), loc.getPitch());
 
         DataWatcher data = entityPlayer.getDataWatcher();
         data.set(DataWatcherRegistry.a.a(13), (byte)127);
 
-        String joinMessage = getJoinMessage(entityPlayer);
+        String joinMessage = "";
 
         if (Main.getPlugin().usesPaper()) {
             PaperUtils_v1_12_R1.playerInitialSpawnEvent(bukkitPlayer);
@@ -130,7 +128,7 @@ public class v1_12_R1 {
         return entityPlayer;
     }
 
-    public static String[] getSkinData(String skinOwner) { //TODO 스킨 데이터 저장했다가 불러오는식으로 변경하기 (현재 개느려터짐)
+    public static String[] getSkinData(String skinOwner) { //TODO 스킨 데이터 (value, signature, uuid 등) 저장했다가 불러오는식으로 변경하기 (현재 개느려터짐)
         String[] str = new String[2];
 
         if (getUUID(skinOwner) == null || skinOwner.matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*")) {
@@ -236,10 +234,4 @@ public class v1_12_R1 {
             e.printStackTrace();
         }
     }
-
-    private static String getJoinMessage(EntityPlayer entityPlayer) {
-        return "";
-    }
-
-
 }

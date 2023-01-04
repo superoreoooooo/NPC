@@ -76,7 +76,9 @@ public class questCompleter implements TabCompleter {
                                 break;
                             case COLLECT:
                                 for (Material material : Material.values()) {
-                                    completions.add(material.toString());
+                                    if (material.isItem()) {
+                                        completions.add(material.toString());
+                                    }
                                 }
                                 break;
                         }
@@ -97,7 +99,9 @@ public class questCompleter implements TabCompleter {
                                         break;
                                     case COLLECT:
                                         for (Material material : Material.values()) {
-                                            completions.add(material.toString());
+                                            if (material.isItem()) {
+                                                completions.add(material.toString());
+                                            }
                                         }
                                         break;
                                 }
@@ -113,7 +117,9 @@ public class questCompleter implements TabCompleter {
                                 break;
                             case "reward":
                                 for (Material material : Material.values()) {
-                                    completions.add(material.toString());
+                                    if (material.isItem()) {
+                                        completions.add(material.toString());
+                                    }
                                 }
                                 break;
                         }
@@ -124,7 +130,9 @@ public class questCompleter implements TabCompleter {
                 switch (args[0]) {
                     case "add":
                         for (Material material : Material.values()) {
-                            completions.add(material.toString());
+                            if (material.isItem()) {
+                                completions.add(material.toString());
+                            }
                         }
                         break;
                 }
