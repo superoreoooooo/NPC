@@ -26,3 +26,6 @@ commands:
   questplayer:
     aliases:
       - qplayer
+  questdescription:
+    aliases:
+      - qd

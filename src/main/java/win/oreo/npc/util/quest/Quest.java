@@ -12,16 +12,14 @@ public class Quest<T> {
     private int questGoal;
     private ItemStack questReward;
     private T questTarget;
-    private String questDescription;
 
-    public Quest(UUID questID, String questName, questType questType, T target, int questGoal, ItemStack questReward, String description) {
+    public Quest(UUID questID, String questName, questType questType, T target, int questGoal, ItemStack questReward) {
         this.questID = questID;
         this.questName = questName;
         this.questType = questType;
         this.questTarget = target;
         this.questGoal = questGoal;
         this.questReward = questReward;
-        this.questDescription = description;
     }
 
     public UUID getQuestID() {
@@ -66,13 +64,5 @@ public class Quest<T> {
 
     public void setQuestReward(ItemStack questReward) {
         this.questReward = questReward;
-    }
-
-    public String getQuestDescription() {
-        return questDescription;
-    }
-
-    public void setQuestDescription(String questDescription) {
-        this.questDescription = questDescription;
     }
 }

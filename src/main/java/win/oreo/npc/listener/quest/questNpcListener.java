@@ -2,6 +2,7 @@ package win.oreo.npc.listener.quest;
 
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -21,6 +22,7 @@ import win.oreo.npc.Main;
 import win.oreo.npc.command.npc.NPCCommand;
 import win.oreo.npc.util.quest.Quest;
 import win.oreo.npc.util.quest.QuestInventory;
+import win.oreo.npc.util.quest.description.QuestDescriptionUtil;
 import win.oreo.npc.util.quest.npc.QuestNpc;
 import win.oreo.npc.util.quest.npc.QuestNpcUtil;
 import win.oreo.npc.util.quest.player.QuestPlayer;
@@ -107,29 +109,30 @@ public class questNpcListener implements Listener {
         }
     }
 
+    private void sendMsg(Player player, Quest quest) {
+        List<String> strings = QuestDescriptionUtil.descriptionMap.get(quest);
+        for (int i = 0; i < QuestDescriptionUtil.descriptionMap.get(quest).size(); i++) {
+            int finalI = i;
+            Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getPlugin(), () -> player.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getPlugin().config.getString("prefixQuest") + " " + strings.get(finalI))), 30L * finalI);
+        }
+    }
+
     @EventHandler
     public void onInteract(PlayerInteractAtEntityEvent e) {
         Player player = e.getPlayer();
         if (coolDown.contains(player)) return;
         delay(player);
         if (!e.getPlayer().isSneaking()) return;
-        player.sendMessage(player.getInventory().getItemInMainHand().toString());
         if (e.getRightClicked().getType().equals(EntityType.PLAYER)) {
             if (e.getRightClicked().hasMetadata("npc")) {
-                String str = e.getRightClicked().getMetadata("npc").get(0).asString();
-                /**
-                player.sendMessage("[questNPC] " + str);
-                List<Quest> questList = questNpcUtil.getQuestNpc(str).getQuestMap().values().stream().toList();
-                for (Quest quest : questList) {
-                    player.sendMessage("name : " + quest.getQuestName() + " id : " + quest.getQuestID());
-                } */
+                String npcMetaData = e.getRightClicked().getMetadata("npc").get(0).asString();
 
                 if (questPlayerUtil.getQuestPlayer(player) == null) {
                     questPlayerUtil.createQuestPlayer(player);
                 }
 
                 QuestPlayer questPlayer = questPlayerUtil.getQuestPlayer(player);
-                QuestNpc questNpc = questNpcUtil.getQuestNpc(str);
+                QuestNpc questNpc = questNpcUtil.getQuestNpc(npcMetaData);
 
                 String[] strings = new String[6];
 
@@ -162,17 +165,17 @@ public class questNpcListener implements Listener {
                     Object target = questNpc.getQuestMap().get(proceeding).getQuestTarget();
                     int goal = questNpc.getQuestMap().get(proceeding).getQuestGoal();
                     questType type = questNpc.getQuestMap().get(proceeding).getQuestType();
-                    int progress = questPlayer.getQuestProgressMap().get(str);
+                    int progress = questPlayer.getQuestProgressMap().get(npcMetaData);
                     ItemStack reward = quest.getQuestReward();
 
-                    strings[0] = questNpc.getNpcName();
-                    strings[1] = questName;
-                    strings[2] = target.toString();
-                    strings[3] = String.valueOf(goal);
-                    strings[4] = reward.getType().name();
-                    strings[5] = String.valueOf(reward.getAmount());
+                    int i = 0;
 
-                    //player.sendMessage("quest by " + str + " name : " + questName + " target : " + target + " goal : " + goal + " progress : (" + progress + "/" + goal + ")");
+                    strings[i++] = questNpc.getNpcName();
+                    strings[i++] = questName;
+                    strings[i++] = target.toString();
+                    strings[i++] = String.valueOf(goal);
+                    strings[i++] = reward.getType().name();
+                    strings[i++] = String.valueOf(reward.getAmount());
 
                     switch (type) {
                         case HUNT -> {
@@ -189,6 +192,7 @@ public class questNpcListener implements Listener {
                     }
 
                     if (!clear) {
+                        sendMsg(player, quest);
                         switch (type) {
                             case HUNT -> player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.data-hunt", strings));
                             case COLLECT -> player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.data-collect", strings));

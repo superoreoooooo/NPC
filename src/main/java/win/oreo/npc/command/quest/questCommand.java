@@ -1,5 +1,6 @@
 package win.oreo.npc.command.quest;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import win.oreo.npc.Main;
 import win.oreo.npc.util.quest.Quest;
+import win.oreo.npc.util.quest.npc.QuestNpcUtil;
+import win.oreo.npc.util.quest.player.QuestPlayerUtil;
 import win.oreo.npc.util.quest.questType;
 import win.oreo.npc.util.quest.QuestUtil;
 
@@ -19,8 +22,12 @@ import static win.oreo.npc.util.quest.QuestUtil.questList;
 
 public class questCommand implements CommandExecutor {
     private QuestUtil questUtil;
+    private QuestNpcUtil questNpcUtil;
+    private QuestPlayerUtil questPlayerUtil;
 
     public questCommand() {
+        this.questPlayerUtil = new QuestPlayerUtil();
+        this.questNpcUtil = new QuestNpcUtil();
         this.questUtil = new QuestUtil();
     }
 
@@ -31,7 +38,7 @@ public class questCommand implements CommandExecutor {
                 String[] strings = new String[10];
                 switch(args[0]) {
                     case "add":
-                        if (args.length == 6) {
+                        if (args.length == 5) {
                             if (player.getInventory().getItemInMainHand() == null || player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
                                 player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.wrong-item-hand", strings));
                                 return false;
@@ -41,12 +48,11 @@ public class questCommand implements CommandExecutor {
                                 return false;
                             }
                             Quest quest = new Quest(UUID.randomUUID(), args[1], questType.valueOf(args[2]),
-                                    args[3], Integer.parseInt(args[4]), player.getInventory().getItemInMainHand(),
-                                    args[5]);
+                                    args[3], Integer.parseInt(args[4]), player.getInventory().getItemInMainHand());
                             questUtil.addQuest(quest);
                             questRegisterMsg(player, quest);
                         }
-                        else if (args.length == 7) {
+                        else if (args.length == 6) {
                             if (Material.matchMaterial(args[5]) == null) {
                                 player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.wrong-item", strings));
                                 return false;
@@ -57,7 +63,7 @@ public class questCommand implements CommandExecutor {
                             }
                             Quest quest = new Quest(UUID.randomUUID(), args[1], questType.valueOf(args[2]),
                                     args[3], Integer.parseInt(args[4]), new ItemStack(Material.valueOf(args[5]),
-                                    1), args[6]);
+                                    1));
                             questUtil.addQuest(quest);
                             questRegisterMsg(player, quest);
                         }
@@ -127,11 +133,6 @@ public class questCommand implements CommandExecutor {
                                     }
                                     strings[1] = quest.getQuestTarget().toString();
                                     player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.edit-trgt", strings));
-                                case "description":
-                                    strings[1] = quest.getQuestDescription();
-                                    player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.edit-desc", strings));
-                                    questUtil.setQuestDescription(quest, args[3]);
-                                    break;
                                 default:
                                     player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.wrong-command", strings));
                                     break;
@@ -146,6 +147,8 @@ public class questCommand implements CommandExecutor {
                     case "remove":
                         if (args[1].equalsIgnoreCase("all")) {
                             questUtil.removeAllQuest();
+                            questNpcUtil.removeAllQuestNpc();
+                            questPlayerUtil.removeAllQuestPlayer();
                             player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.remove-all", strings));
                             return false;
                         }
@@ -162,7 +165,7 @@ public class questCommand implements CommandExecutor {
                     case "addrandom":
                         Quest rQuest = new Quest(UUID.randomUUID(), getRandomWord(7),
                                 getRandomQuestType(), getRandomQuestType() == questType.HUNT ? getRandomEntityType().toString() : getRandomMaterial().toString(),
-                                new Random().nextInt(64), new ItemStack(getRandomMaterial(), new Random().nextInt(64)), getRandomWord(7));
+                                new Random().nextInt(64), new ItemStack(getRandomMaterial(), new Random().nextInt(64)));
                         questUtil.addQuest(rQuest);
                         questRegisterMsg(player, rQuest);
                         break;
@@ -183,7 +186,6 @@ public class questCommand implements CommandExecutor {
         strings[3] = quest.getQuestTarget().toString();
         strings[4] = String.valueOf(quest.getQuestGoal());
         strings[5] = quest.getQuestReward().toString();
-        strings[6] = quest.getQuestDescription();
         player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.quest-register", strings));
     }
 
@@ -195,7 +197,6 @@ public class questCommand implements CommandExecutor {
         strings[3] = quest.getQuestTarget().toString();
         strings[4] = String.valueOf(quest.getQuestGoal());
         strings[5] = quest.getQuestReward().toString();
-        strings[6] = quest.getQuestDescription();
         player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.quest-remove", strings));
     }
 
@@ -207,7 +208,6 @@ public class questCommand implements CommandExecutor {
         strings[3] = quest.getQuestTarget().toString();
         strings[4] = String.valueOf(quest.getQuestGoal());
         strings[5] = quest.getQuestReward().toString();
-        strings[6] = quest.getQuestDescription();
         player.sendMessage(Main.getConfigMessage(Main.getPlugin().config, "messages.quest.quest-list", strings));
     }
 

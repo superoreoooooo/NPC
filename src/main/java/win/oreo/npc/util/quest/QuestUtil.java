@@ -25,7 +25,6 @@ public class QuestUtil {
             plugin.questYml.getConfig().set("quest." + quest.getQuestID().toString() + ".target", quest.getQuestTarget());
             plugin.questYml.getConfig().set("quest." + quest.getQuestID().toString() + ".goal", quest.getQuestGoal());
             plugin.questYml.getConfig().set("quest." + quest.getQuestID().toString() + ".reward", quest.getQuestReward());
-            plugin.questYml.getConfig().set("quest." + quest.getQuestID().toString() + ".description", quest.getQuestDescription());
             plugin.questYml.saveConfig();
             Bukkit.getConsoleSender().sendMessage("Quest saved / UUID : " + quest.getQuestID() + " Name : " + quest.getQuestName() + " Type : " + quest.getQuestType());
         }
@@ -74,9 +73,5 @@ public class QuestUtil {
 
     public void setQuestTarget(Quest quest, Object target) {
         quest.setQuestTarget(target);
-    }
-
-    public void setQuestDescription(Quest quest, String description) {
-        quest.setQuestDescription(description);
     }
 }

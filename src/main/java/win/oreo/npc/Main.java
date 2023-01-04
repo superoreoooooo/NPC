@@ -9,6 +9,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import win.oreo.npc.command.quest.description.questDescriptionCommand;
+import win.oreo.npc.command.quest.description.questDescriptionCompleter;
 import win.oreo.npc.command.quest.questCommand;
 import win.oreo.npc.command.quest.questCompleter;
 import win.oreo.npc.command.questNpc.questNpcCommand;
@@ -34,6 +36,7 @@ import win.oreo.npc.listener.npc.PreLoginListener;
 import win.oreo.npc.listener.npc.playerMovementListener;
 import win.oreo.npc.util.npc.Color;
 import win.oreo.npc.util.quest.Quest;
+import win.oreo.npc.util.quest.description.QuestDescriptionUtil;
 import win.oreo.npc.util.quest.npc.QuestNpc;
 import win.oreo.npc.util.quest.npc.QuestNpcUtil;
 import win.oreo.npc.util.quest.player.QuestPlayer;
@@ -119,6 +122,8 @@ public final class Main extends JavaPlugin {
         getCommand("questnpc").setTabCompleter(new questNpcCompleter());
         getCommand("questplayer").setExecutor(new questPlayerCommand());
         getCommand("questplayer").setTabCompleter(new questPlayerCompleter());
+        getCommand("questdescription").setExecutor(new questDescriptionCommand());
+        getCommand("questdescription").setTabCompleter(new questDescriptionCompleter());
 
         getServer().getPluginManager().registerEvents(new DeathListener(), this);
         getServer().getPluginManager().registerEvents(new PreLoginListener(), this);
@@ -148,6 +153,7 @@ public final class Main extends JavaPlugin {
         initializeQuest();
         initializeQuestNpc();
         initializeQuestPlayer();
+        initializeQuestDescription();
         initializeNPC();
 
         CustomEnchantment.register();
@@ -169,6 +175,8 @@ public final class Main extends JavaPlugin {
         questNpcUtil.saveAllQuestNpc();
         QuestPlayerUtil questPlayerUtil = new QuestPlayerUtil();
         questPlayerUtil.saveAllQuestPlayer();
+        QuestDescriptionUtil questDescriptionUtil = new QuestDescriptionUtil();
+        questDescriptionUtil.saveDescription();
         List<NPCPlayer> list = new ArrayList<>(NPCPlayer.getNPCPlayerList());
         for (NPCPlayer player : list) {
             player.removePlayer();
@@ -185,32 +193,11 @@ public final class Main extends JavaPlugin {
             Object target = questYml.getConfig().get("quest." + uuid + ".target");
             int goal = questYml.getConfig().getInt("quest." + uuid + ".goal");
             ItemStack reward = questYml.getConfig().getItemStack("quest." + uuid + ".reward");
-            String description = questYml.getConfig().getString("quest." + uuid + ".description");
 
-            QuestUtil.questList.add(new Quest(questID, name, type, target, goal, reward, description));
+            QuestUtil.questList.add(new Quest(questID, name, type, target, goal, reward));
             args[0] = name;
             args[1] = questID.toString();
             Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.quest.load", args));
-        }
-    }
-
-    public void initializeQuestPlayer() {
-        String[] args = new String[1];
-        for (String playerName : questYml.getConfig().getConfigurationSection("player.").getKeys(false)) {
-            HashMap<String, Integer> map = new HashMap<>();
-            HashMap<String, Integer> map2 = new HashMap<>();
-            Set<String> com = new HashSet<>();
-            for (String npcName : questYml.getConfig().getConfigurationSection("player." + playerName + ".npc.").getKeys(false)) {
-                if (questYml.getConfig().getBoolean("player." + playerName + ".npc." + npcName + ".complete")) com.add(npcName);
-                int i = questYml.getConfig().getInt("player." + playerName + ".npc." + npcName + ".proceeding");
-                int j = questYml.getConfig().getInt("player." + playerName + ".npc." + npcName + ".progress");
-                map.put(npcName, i);
-                map2.put(npcName, j);
-            }
-            QuestPlayer questPlayer = new QuestPlayer(Bukkit.getOfflinePlayer(playerName), map, com, map2);
-            QuestPlayerUtil.questPlayerList.add(questPlayer);
-            args[0] = playerName;
-            Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.quest.player.load", args));
         }
     }
 
@@ -230,6 +217,39 @@ public final class Main extends JavaPlugin {
             npc.getQuestMap().values().forEach(quest -> list.add(quest.getQuestID().toString()));
             args[1] = list.toString();
             Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.quest.npc.load", args));
+        }
+    }
+
+    public void initializeQuestPlayer() {
+        String[] args = new String[1];
+        for (String playerName : questYml.getConfig().getConfigurationSection("player.").getKeys(false)) {
+            HashMap<String, Integer> map = new HashMap<>();
+            HashMap<String, Integer> map2 = new HashMap<>();
+            Set<String> com = new HashSet<>();
+            for (String npcName : questYml.getConfig().getConfigurationSection("player." + playerName + ".npc.").getKeys(false)) {
+                if (questYml.getConfig().getBoolean("player." + playerName + ".npc." + npcName + ".complete")) com.add(npcName);
+                int i = questYml.getConfig().getInt("player." + playerName + ".npc." + npcName + ".proceeding");
+                int j = questYml.getConfig().getInt("player." + playerName + ".npc." + npcName + ".progress");
+                map.put(npcName, i);
+                map2.put(npcName, j);
+            }
+            QuestPlayer questPlayer = new QuestPlayer(Bukkit.getOfflinePlayer(playerName), map, com, map2);
+            QuestPlayerUtil.questPlayerList.add(questPlayer);
+            args[0] = playerName;
+            Bukkit.getConsoleSender().sendMessage(getConfigMessage(config, "messages.quest.player.load", args));
+        }
+    }
+
+    public void initializeQuestDescription() {
+        String[] args = new String[2];
+        for (String uuid : questYml.getConfig().getConfigurationSection("description.").getKeys(false)) {
+            QuestUtil util = new QuestUtil();
+            Quest quest = util.getQuestByID(UUID.fromString(uuid));
+            List<String> strings = questYml.getConfig().getStringList("description." + uuid);
+            QuestDescriptionUtil.descriptionMap.put(quest, strings);
+            args[0] = quest.getQuestID().toString();
+            args[1] = Arrays.toString(strings.toArray());
+            Bukkit.getConsoleSender().sendMessage(getConfigMessage(config, "messages.quest.description.load", args));
         }
     }
 

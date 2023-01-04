@@ -112,9 +112,6 @@ public class questCompleter implements TabCompleter {
                             case "goal":
                                 completions.add(String.valueOf(questUtil.getQuestByID(UUID.fromString(args[1])).getQuestGoal()));
                                 break;
-                            case "description":
-                                completions.add(questUtil.getQuestByID(UUID.fromString(args[1])).getQuestDescription());
-                                break;
                             case "reward":
                                 for (Material material : Material.values()) {
                                     if (material.isItem()) {
