@@ -1,10 +1,7 @@
 package win.oreo.npc;
 
 import net.minecraft.server.v1_12_R1.EntityPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -197,7 +194,7 @@ public final class Main extends JavaPlugin {
             QuestUtil.questList.add(new Quest(questID, name, type, target, goal, reward));
             args[0] = name;
             args[1] = questID.toString();
-            Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.quest.load", args));
+            Bukkit.getConsoleSender().sendMessage(getConfigMessage(config, "messages.quest.load", args));
         }
     }
 
@@ -216,7 +213,7 @@ public final class Main extends JavaPlugin {
             List<String> list = new ArrayList<>();
             npc.getQuestMap().values().forEach(quest -> list.add(quest.getQuestID().toString()));
             args[1] = list.toString();
-            Bukkit.getConsoleSender().sendMessage( getConfigMessage(config, "messages.quest.npc.load", args));
+            Bukkit.getConsoleSender().sendMessage(getConfigMessage(config, "messages.quest.npc.load", args));
         }
     }
 
